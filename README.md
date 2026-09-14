@@ -2,11 +2,7 @@
 
 The shared foundation every Perfect Core package is built on.
 
-Namespace: `PerfectCore` (editor code: `PerfectCore.Editor`).
-Because it sits at the root of the namespace tree, packages such as `PerfectCore.PerfectUI` and
-`PerfectCore.PerfectInventory` see these types without any `using` directive.
-
-## What's inside
+## Content
 
 ### Data assets
 
@@ -84,7 +80,7 @@ system and the scene structure are known.
 `Comment` is an editor-only note you can attach to a GameObject to explain why it is set up the way it
 is. It compiles to nothing in a player build.
 
-## Bundled third-party code
+## Third-party notice
 
 `Dependencies/NaughtyAttributes` — a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes)
 by Denis Rizov, MIT licensed. Its assemblies and namespace are renamed to
