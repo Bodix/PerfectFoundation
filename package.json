@@ -3,7 +3,8 @@
     "version": "1.0.0",
     "displayName": "Perfect Core",
     "description": "Shared lightweight foundation for Perfect Core packages.",
-    "unity": "2019.3",
+    "unity": "2022.3",
+    "unityRelease": "62f3",
     "author": {
         "name": "Perfect Core",
         "email": "contact.perfectcore@gmail.com",
