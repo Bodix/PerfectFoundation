@@ -2,11 +2,11 @@
     "name": "net.perfectcore.perfectcore",
     "version": "1.0.0",
     "displayName": "Perfect Core",
-    "description": "Shared foundation for Perfect Core packages: data assets with stable IDs, an event bus, a [SerializeReference] type selector and animation contracts.",
+    "description": "Shared lightweight foundation for Perfect Core packages.",
     "unity": "2019.3",
     "author": {
         "name": "Perfect Core",
-        "email": "bodix321@gmail.com",
+        "email": "contact.perfectcore@gmail.com",
         "url": "https://perfectcore.net"
     },
     "keywords": [
