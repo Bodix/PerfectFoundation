@@ -1,7 +1,7 @@
 {
     "name": "PerfectCore.Editor",
     "references": [
-        "PerfectCore"
+        "GUID:ee2aa2a813faaac4c9e13d93715c4646"
     ],
     "includePlatforms": [
         "Editor"
