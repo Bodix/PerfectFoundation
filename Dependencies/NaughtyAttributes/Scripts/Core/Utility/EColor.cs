@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	public enum EColor
 	{

@@ -5,7 +5,7 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	public static class ReflectionUtility
 	{

@@ -1,6 +1,6 @@
 ﻿using UnityEditor;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	public class RequiredPropertyValidator : PropertyValidatorBase
 	{

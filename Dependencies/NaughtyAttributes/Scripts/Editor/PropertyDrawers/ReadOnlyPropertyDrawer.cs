@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using UnityEditor;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	[CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
 	public class ReadOnlyPropertyDrawer : PropertyDrawerBase

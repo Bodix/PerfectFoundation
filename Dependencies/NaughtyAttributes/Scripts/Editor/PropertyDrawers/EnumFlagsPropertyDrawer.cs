@@ -2,7 +2,7 @@
 using UnityEditor;
 using System;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	[CustomPropertyDrawer(typeof(EnumFlagsAttribute))]
 	public class EnumFlagsPropertyDrawer : PropertyDrawerBase

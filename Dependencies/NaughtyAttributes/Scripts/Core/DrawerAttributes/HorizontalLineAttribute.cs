@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = true, Inherited = true)]
 	public class HorizontalLineAttribute : DrawerAttribute

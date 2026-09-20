@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	[AttributeUsage(AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public class ShowNativePropertyAttribute : SpecialCaseDrawerAttribute

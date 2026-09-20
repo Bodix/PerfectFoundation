@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	[AttributeUsage(AttributeTargets.Field | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
 	public class EnableIfAttribute : EnableIfAttributeBase

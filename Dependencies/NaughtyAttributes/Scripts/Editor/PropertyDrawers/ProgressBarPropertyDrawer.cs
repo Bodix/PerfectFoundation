@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.Reflection;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	[CustomPropertyDrawer(typeof(ProgressBarAttribute))]
 	public class ProgressBarPropertyDrawer : PropertyDrawerBase

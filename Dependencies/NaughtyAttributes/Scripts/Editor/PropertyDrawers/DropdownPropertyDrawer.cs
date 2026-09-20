@@ -5,7 +5,7 @@ using System.Reflection;
 using System;
 using System.Collections.Generic;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	[CustomPropertyDrawer(typeof(DropdownAttribute))]
 	public class DropdownPropertyDrawer : PropertyDrawerBase

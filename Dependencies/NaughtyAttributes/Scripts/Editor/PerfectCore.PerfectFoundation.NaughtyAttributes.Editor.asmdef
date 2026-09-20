@@ -1,7 +1,7 @@
 {
-    "name": "PerfectCore.NaughtyAttributes.Editor",
+    "name": "PerfectCore.PerfectFoundation.NaughtyAttributes.Editor",
     "references": [
-        "PerfectCore.NaughtyAttributes"
+        "PerfectCore.PerfectFoundation.NaughtyAttributes"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [

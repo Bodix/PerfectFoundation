@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	[CustomPropertyDrawer(typeof(SceneAttribute))]
 	public class ScenePropertyDrawer : PropertyDrawerBase

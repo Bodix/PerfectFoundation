@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public class AnimatorParamAttribute : DrawerAttribute

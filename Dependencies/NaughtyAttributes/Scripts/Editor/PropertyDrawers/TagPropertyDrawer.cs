@@ -2,7 +2,7 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	[CustomPropertyDrawer(typeof(TagAttribute))]
 	public class TagPropertyDrawer : PropertyDrawerBase

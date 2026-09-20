@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	/// <summary>
 	/// Base class for all drawer attributes

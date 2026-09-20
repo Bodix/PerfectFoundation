@@ -2,7 +2,7 @@ using UnityEditor;
 using System.Reflection;
 using System;
 
-namespace PerfectCore.NaughtyAttributes.Editor
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
 	public class ValidateInputPropertyValidator : PropertyValidatorBase
 	{

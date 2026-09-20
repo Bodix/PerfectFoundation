@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	public class SpecialCaseDrawerAttribute : Attribute, INaughtyAttribute
 	{

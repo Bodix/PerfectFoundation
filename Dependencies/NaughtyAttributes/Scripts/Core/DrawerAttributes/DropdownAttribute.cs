@@ -2,7 +2,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace PerfectCore.NaughtyAttributes
+namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public class DropdownAttribute : DrawerAttribute
