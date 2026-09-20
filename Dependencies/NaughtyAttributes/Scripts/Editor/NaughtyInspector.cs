@@ -6,8 +6,21 @@ using UnityEngine;
 
 namespace PerfectCore.NaughtyAttributes.Editor
 {
+	// Perfect Core fork: this inspector is registered for every MonoBehaviour and
+	// ScriptableObject, so the bundled attributes work everywhere out of the box.
+	// A component that carries no Naughty attribute falls through to
+	// DrawDefaultInspector(), so the default look is preserved.
+	//
+	// Unity allows a single custom editor per type. If the project already uses another
+	// tool that claims UnityEngine.Object - Odin Inspector, the original NaughtyAttributes,
+	// Tri-Inspector - only one of them wins, and which one is not deterministic. Add
+	// PERFECTCORE_DISABLE_GLOBAL_INSPECTOR to Scripting Define Symbols to stand down and leave
+	// that slot to the other tool; Perfect Core's own components keep their attributes
+	// either way, through PerfectCore.Editor.TimerEditor.
+#if !PERFECTCORE_DISABLE_GLOBAL_INSPECTOR
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(UnityEngine.Object), true)]
+#endif
 	public class NaughtyInspector : UnityEditor.Editor
 	{
 		private List<SerializedProperty> _serializedProperties = new List<SerializedProperty>();
