@@ -1,17 +1,14 @@
 {
-  "name": "com.dbrizov.naughtyattributes",
-  "displayName": "NaughtyAttributes",
+  "name": "net.perfectcore.naughtyattributes",
+  "displayName": "NaughtyAttributes (Perfect Core fork)",
   "version": "2.0.7",
-  "unity": "2018.3",
-  "description": "NaughtyAttributes is an extension for the Unity Inspector.",
-  "keywords": [ "attribute", "inspector", "editor" ],
+  "unity": "2019.3",
+  "description": "Fork of NaughtyAttributes by Denis Rizov, MIT licensed. Assemblies and namespace are renamed to PerfectCore.NaughtyAttributes so a project that already contains the original keeps compiling. Bundled with Perfect Core. See \"Third Party Notices.txt\" in the package root.",
+  "keywords": [
+    "attribute",
+    "inspector",
+    "editor"
+  ],
   "category": "editor extensions",
-  "dependencies": {},
-  "samples": [
-    {
-      "displayName": "Demo Scene",
-      "description": "Demo Scene",
-      "path": "Samples/DemoScene"
-    }
-  ]
+  "dependencies": {}
 }
