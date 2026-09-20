@@ -1,9 +1,8 @@
 {
     "name": "PerfectCore.PerfectFoundation.NaughtyAttributes.Editor",
     "references": [
-        "PerfectCore.PerfectFoundation.NaughtyAttributes"
+        "GUID:9594cbbc1d2461b44a68e886f99de9e4"
     ],
-    "optionalUnityReferences": [],
     "includePlatforms": [
         "Editor"
     ],
@@ -12,5 +11,7 @@
     "overrideReferences": false,
     "precompiledReferences": [],
     "autoReferenced": true,
-    "defineConstraints": []
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
 }
