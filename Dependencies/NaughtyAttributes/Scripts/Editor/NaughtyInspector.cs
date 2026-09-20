@@ -14,10 +14,10 @@ namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 	// Unity allows a single custom editor per type. If the project already uses another
 	// tool that claims UnityEngine.Object - Odin Inspector, the original NaughtyAttributes,
 	// Tri-Inspector - only one of them wins, and which one is not deterministic. Add
-	// PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR to Scripting Define Symbols to stand down and leave
+	// PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR to Scripting Define Symbols to stand down and leave
 	// that slot to the other tool; Perfect Core's own components keep their attributes
 	// either way, through PerfectCore.PerfectFoundation.Editor.TimerEditor.
-#if !PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR
+#if !PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR
 	[CanEditMultipleObjects]
 	[CustomEditor(typeof(UnityEngine.Object), true)]
 #endif

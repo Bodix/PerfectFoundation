@@ -221,7 +221,7 @@ NaughtyAttributes, Tri-Inspector — claims `UnityEngine.Object` to do its work.
 installed, only one wins, and which one is not deterministic; the symptom is that one tool's
 attributes quietly stop drawing.
 
-If that happens, add `PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player →
+If that happens, add `PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player →
 Scripting Define Symbols**. Perfect Foundation then leaves the project-wide inspector to the other
 tool, and its own components keep their attributes regardless.
 

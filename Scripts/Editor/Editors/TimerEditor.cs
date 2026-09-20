@@ -13,7 +13,7 @@ namespace PerfectCore.PerfectFoundation.Editor
 	/// The bundled inspector is registered project-wide, so this explicit registration is
 	/// normally redundant. It exists so that Perfect Core's own components keep their
 	/// attributes when the project-wide slot goes to another tool - either because
-	/// PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR was defined, or because Odin Inspector or a similar
+	/// PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR was defined, or because Odin Inspector or a similar
 	/// extension won it.
 	/// </para>
 	/// </summary>

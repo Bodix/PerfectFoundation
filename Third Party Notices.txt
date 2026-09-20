@@ -24,7 +24,7 @@ Modifications made for Perfect Foundation:
 
   2. The project-wide inspector registration on NaughtyInspector
      ([CustomEditor(typeof(UnityEngine.Object), true)]) can be compiled out with
-     the PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR scripting define symbol, so that a project
+     the PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR scripting define symbol, so that a project
      already using another inspector extension can leave that slot to it.
 
   3. The bundled demo scene and test scripts were removed.
