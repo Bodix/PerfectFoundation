@@ -1,6 +1,6 @@
 ﻿// Perfect Core for Unity
-// Copyright © 2020 Bogdan Nikolayev <bodix321@gmail.com>
-// All Rights Reserved
+// Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
+// All Rights Reserved.
 
 using System;
 using PerfectCore.NaughtyAttributes;
@@ -9,9 +9,6 @@ using UnityEngine;
 namespace PerfectCore
 {
 	public delegate void TimerUpdateHandler(float deltaTime);
-
-	// TODO: Add check for enabled GO in Start method. Also, review Awake logic after this.
-	// TODO: Consider removing the _onStart callback.
 
 	public class Timer : MonoBehaviour
 	{
@@ -66,7 +63,7 @@ namespace PerfectCore
 				enabled = false;
 		}
 
-		public void Update()
+		private void Update()
 		{
 			if (UpdateMethod != TimerUpdateMethod.Update)
 				return;
@@ -74,7 +71,7 @@ namespace PerfectCore
 			Update(Time.deltaTime);
 		}
 
-		public void FixedUpdate()
+		private void FixedUpdate()
 		{
 			if (UpdateMethod != TimerUpdateMethod.FixedUpdate)
 				return;
@@ -95,12 +92,6 @@ namespace PerfectCore
 			SetupAndEnable(timeInSeconds, onStart, onUpdate, onStop, onComplete);
 			_onStart?.Invoke();
 			Started?.Invoke();
-		}
-
-		[Button("Start (60 sec)")]
-		private void TestStart()
-		{
-			Start(60);
 		}
 
 		[HideIf(nameof(IsPaused))]

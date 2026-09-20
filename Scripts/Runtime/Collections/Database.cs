@@ -1,6 +1,6 @@
 ﻿// Perfect Core for Unity
-// Copyright © 2020 Bogdan Nikolayev <bodix321@gmail.com>
-// All Rights Reserved
+// Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
+// All Rights Reserved.
 
 using System.Collections.Generic;
 using UnityEngine;

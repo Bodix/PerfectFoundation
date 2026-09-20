@@ -1,6 +1,6 @@
 ﻿// Perfect Core for Unity
-// Copyright © 2020 Bogdan Nikolayev <bodix321@gmail.com>
-// All Rights Reserved
+// Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
+// All Rights Reserved.
 
 using System;
 using System.Linq;
@@ -9,10 +9,6 @@ using UnityEngine;
 
 namespace PerfectCore.Editor
 {
-	// TODO: Make safe types renaming:
-	// https://docs.unity3d.com/ScriptReference/SerializationUtility.HasManagedReferencesWithMissingTypes.html
-	// https://docs.unity3d.com/ScriptReference/SerializationUtility.GetManagedReferencesWithMissingTypes.html
-
 	[CustomPropertyDrawer(typeof(TypeSelectorAttribute))]
 	public class TypeSelectorDrawer : AttributePropertyDrawer<TypeSelectorAttribute>
 	{

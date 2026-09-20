@@ -1,6 +1,6 @@
 // Perfect Core for Unity
-// Copyright © 2026 Bogdan Nikolayev <bodix321@gmail.com>
-// All Rights Reserved
+// Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
+// All Rights Reserved.
 
 using System.Linq;
 using UnityEditor;
@@ -8,8 +8,11 @@ using UnityEngine;
 
 namespace PerfectCore.Editor
 {
-	// Don't forget for this attribute.
-	// [CustomPropertyDrawer(typeof(TAttribute))]
+	/// <summary>
+	/// Base class for property drawers bound to a single <see cref="PropertyAttribute"/>.
+	/// A derived drawer declares its own [CustomPropertyDrawer(typeof(TAttribute))] attribute
+	/// and lists the property types it supports in <see cref="SupportedTypes"/>.
+	/// </summary>
 	public abstract class AttributePropertyDrawer<TAttribute> : PropertyDrawer where TAttribute : PropertyAttribute
 	{
 		protected abstract SerializedPropertyType[] SupportedTypes { get; }

@@ -1,5 +1,5 @@
 // Perfect Core for Unity
-// Copyright © 2026 Bogdan Nikolayev <bodix321@gmail.com>
+// Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
 // All Rights Reserved.
 
 using System.IO;
