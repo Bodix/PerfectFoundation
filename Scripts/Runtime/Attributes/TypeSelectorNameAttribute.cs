@@ -4,7 +4,7 @@
 
 using System;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
 	/// Custom display name for this type in a <see cref="TypeSelectorAttribute"/> dropdown.

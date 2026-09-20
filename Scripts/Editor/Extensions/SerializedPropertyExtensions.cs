@@ -6,7 +6,7 @@ using System;
 using System.Reflection;
 using UnityEditor;
 
-namespace PerfectCore.Editor
+namespace PerfectCore.PerfectFoundation.Editor
 {
 	public static class SerializedPropertyExtensions
 	{

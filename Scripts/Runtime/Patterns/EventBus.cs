@@ -6,7 +6,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
 	/// In-memory event bus. Subscribe, unsubscribe and nested publish are safe during dispatch.

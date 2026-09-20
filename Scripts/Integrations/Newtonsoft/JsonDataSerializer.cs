@@ -6,7 +6,7 @@
 using System.IO;
 using Newtonsoft.Json;
 
-namespace PerfectCore.Newtonsoft
+namespace PerfectCore.PerfectFoundation.Newtonsoft
 {
 	public class JsonDataSerializer : IDataSerializer
 	{

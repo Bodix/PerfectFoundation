@@ -1,4 +1,4 @@
-# Perfect Core
+# Perfect Foundation
 
 The shared foundation every Perfect Core package is built on.
 
@@ -11,22 +11,22 @@ store requires it, but the code itself targets 2019.3 and up.
 
 ## Installation
 
-Import the package from the Asset Store. Perfect Core has no hard-coded paths: the folder can
+Import the package from the Asset Store. Perfect Foundation has no hard-coded paths: the folder can
 sit anywhere in your project, and moving it later breaks nothing.
 
 ### Assembly definitions
 
-Perfect Core ships as three assemblies:
+Perfect Foundation ships as three assemblies:
 
 | Assembly | Platforms | Contents |
 |---|---|---|
-| `PerfectCore` | All | Everything under `Scripts/Runtime` |
-| `PerfectCore.Editor` | Editor | Drawers and inspectors |
-| `PerfectCore.Newtonsoft` | All | JSON integration, compiled only when Newtonsoft.Json is installed |
+| `PerfectCore.PerfectFoundation` | All | Everything under `Scripts/Runtime` |
+| `PerfectCore.PerfectFoundation.Editor` | Editor | Drawers and inspectors |
+| `PerfectCore.PerfectFoundation.Newtonsoft` | All | JSON integration, compiled only when Newtonsoft.Json is installed |
 
-All three are auto-referenced, so `using PerfectCore;` works straight away in Unity's default
+All three are auto-referenced, so `using PerfectCore.PerfectFoundation;` works straight away in Unity's default
 `Assembly-CSharp` with nothing to set up. If your own code lives in assembly definitions, add
-`PerfectCore` to their references as usual — auto-referencing only ever applies to Unity's
+`PerfectCore.PerfectFoundation` to their references as usual — auto-referencing only ever applies to Unity's
 predefined assemblies, so it never interferes with an asmdef-based project.
 
 ## Contents
@@ -208,7 +208,7 @@ back.
 
 The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes)
 and uses it for its own inspectors. Its assemblies and namespace are renamed to
-`PerfectCore.NaughtyAttributes`, so a project that already contains the original keeps
+`PerfectCore.PerfectFoundation.NaughtyAttributes`, so a project that already contains the original keeps
 compiling.
 
 The attributes work across your whole project out of the box — put `[Button]`, `[ShowIf]` or
@@ -221,8 +221,8 @@ NaughtyAttributes, Tri-Inspector — claims `UnityEngine.Object` to do its work.
 installed, only one wins, and which one is not deterministic; the symptom is that one tool's
 attributes quietly stop drawing.
 
-If that happens, add `PERFECTCORE_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player →
-Scripting Define Symbols**. Perfect Core then leaves the project-wide inspector to the other
+If that happens, add `PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player →
+Scripting Define Symbols**. Perfect Foundation then leaves the project-wide inspector to the other
 tool, and its own components keep their attributes regardless.
 
 ## Third-party notice

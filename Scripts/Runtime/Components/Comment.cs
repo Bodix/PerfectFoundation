@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	[AddComponentMenu("Perfect Core/Comment")]
 	public class Comment : MonoBehaviour

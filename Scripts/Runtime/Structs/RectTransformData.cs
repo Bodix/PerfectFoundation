@@ -5,7 +5,7 @@
 using System;
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	[Serializable]
 	public struct RectTransformData

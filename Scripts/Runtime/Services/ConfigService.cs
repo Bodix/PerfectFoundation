@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	public class ConfigService
 	{

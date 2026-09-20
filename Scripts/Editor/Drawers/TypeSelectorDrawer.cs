@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace PerfectCore.Editor
+namespace PerfectCore.PerfectFoundation.Editor
 {
 	[CustomPropertyDrawer(typeof(TypeSelectorAttribute))]
 	public class TypeSelectorDrawer : AttributePropertyDrawer<TypeSelectorAttribute>

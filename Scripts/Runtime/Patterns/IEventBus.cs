@@ -4,7 +4,7 @@
 
 using System;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	public interface IEventBus
 	{

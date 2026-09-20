@@ -2,7 +2,7 @@
 // Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
 // All Rights Reserved.
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
 	/// Defines an interface for handling back navigation events.

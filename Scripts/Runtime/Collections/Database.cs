@@ -5,7 +5,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	public abstract class Database<T> : ScriptableObject where T : DataAsset
 	{

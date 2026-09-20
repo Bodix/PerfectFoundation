@@ -1,7 +1,7 @@
 THIRD PARTY NOTICES
 ===================
 
-Perfect Core for Unity contains the third-party software component listed
+Perfect Foundation for Unity contains the third-party software component listed
 below. That component remains governed by its own license, reproduced here in
 full.
 
@@ -16,15 +16,15 @@ Source:   https://github.com/dbrizov/NaughtyAttributes
 License:  MIT
 Location: Dependencies/NaughtyAttributes
 
-Modifications made for Perfect Core:
+Modifications made for Perfect Foundation:
 
   1. The assembly definitions and the root namespace are renamed from
-     "NaughtyAttributes" to "PerfectCore.NaughtyAttributes", so that a project
+     "NaughtyAttributes" to "PerfectCore.PerfectFoundation.NaughtyAttributes", so that a project
      which already contains the original package keeps compiling.
 
   2. The project-wide inspector registration on NaughtyInspector
      ([CustomEditor(typeof(UnityEngine.Object), true)]) can be compiled out with
-     the PERFECTCORE_DISABLE_GLOBAL_INSPECTOR scripting define symbol, so that a project
+     the PERFECTCORE_FOUNDATION_DISABLE_GLOBAL_INSPECTOR scripting define symbol, so that a project
      already using another inspector extension can leave that slot to it.
 
   3. The bundled demo scene and test scripts were removed.

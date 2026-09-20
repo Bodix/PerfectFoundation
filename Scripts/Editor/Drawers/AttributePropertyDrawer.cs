@@ -6,7 +6,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace PerfectCore.Editor
+namespace PerfectCore.PerfectFoundation.Editor
 {
 	/// <summary>
 	/// Base class for property drawers bound to a single <see cref="PropertyAttribute"/>.

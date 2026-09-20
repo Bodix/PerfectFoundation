@@ -1,6 +1,6 @@
 # License
 
-Perfect Core for Unity
+Perfect Foundation for Unity
 
 Copyright (c) 2020-2026 Bogdan Nikolayev. All Rights Reserved.
 

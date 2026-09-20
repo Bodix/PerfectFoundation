@@ -7,7 +7,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace PerfectCore.Editor
+namespace PerfectCore.PerfectFoundation.Editor
 {
 	[CustomEditor(typeof(Comment))]
 	public class CommentEditor : UnityEditor.Editor

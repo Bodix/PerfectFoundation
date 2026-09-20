@@ -4,7 +4,7 @@
 
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
 	/// Abstracts the instantiation process to allow external frameworks 

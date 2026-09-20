@@ -3,10 +3,10 @@
 // All Rights Reserved.
 
 using System;
-using PerfectCore.NaughtyAttributes;
+using PerfectCore.PerfectFoundation.NaughtyAttributes;
 using UnityEngine;
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	public delegate void TimerUpdateHandler(float deltaTime);
 

@@ -6,7 +6,7 @@
 using System;
 using Newtonsoft.Json;
 
-namespace PerfectCore.Newtonsoft
+namespace PerfectCore.PerfectFoundation.Newtonsoft
 {
 	public class DataAssetConverter<T> : JsonConverter<T> where T : DataAsset
 	{

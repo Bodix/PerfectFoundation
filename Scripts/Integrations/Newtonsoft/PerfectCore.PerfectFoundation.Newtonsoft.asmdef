@@ -1,5 +1,5 @@
 {
-    "name": "PerfectCore.Newtonsoft",
+    "name": "PerfectCore.PerfectFoundation.Newtonsoft",
     "references": [
         "GUID:ee2aa2a813faaac4c9e13d93715c4646"
     ],

@@ -9,7 +9,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace PerfectCore
+namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
 	/// Base class for all data assets with an auto-generated unique identifier.

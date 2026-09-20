@@ -1,13 +1,9 @@
 {
-    "name": "PerfectCore.Editor",
+    "name": "PerfectCore.PerfectFoundation",
     "references": [
-        "GUID:ee2aa2a813faaac4c9e13d93715c4646",
-        "GUID:9594cbbc1d2461b44a68e886f99de9e4",
-        "GUID:9fd07a66489551546be04c7f0e8fb599"
+        "GUID:9594cbbc1d2461b44a68e886f99de9e4"
     ],
-    "includePlatforms": [
-        "Editor"
-    ],
+    "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
     "overrideReferences": false,

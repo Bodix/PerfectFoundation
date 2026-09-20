@@ -3,7 +3,7 @@
   "displayName": "NaughtyAttributes (Perfect Core fork)",
   "version": "2.0.7",
   "unity": "2019.3",
-  "description": "Fork of NaughtyAttributes by Denis Rizov, MIT licensed. Assemblies and namespace are renamed to PerfectCore.NaughtyAttributes so a project that already contains the original keeps compiling. Bundled with Perfect Core. See \"Third Party Notices.txt\" in the package root.",
+  "description": "Fork of NaughtyAttributes by Denis Rizov, MIT licensed. Assemblies and namespace are renamed to PerfectCore.PerfectFoundation.NaughtyAttributes so a project that already contains the original keeps compiling. Bundled with Perfect Foundation. See \"Third Party Notices.txt\" in the package root.",
   "keywords": [
     "attribute",
     "inspector",
