@@ -11,8 +11,8 @@ store requires it, but the code itself targets 2019.3 and up.
 
 ## Installation
 
-Import the package from the Asset Store. Everything lives under
-`Assets/Packages/PerfectCore` and can be moved anywhere in the project.
+Import the package from the Asset Store. Perfect Core has no hard-coded paths: the folder can
+sit anywhere in your project, and moving it later breaks nothing.
 
 ### Assembly definitions
 
@@ -31,21 +31,20 @@ predefined assemblies, so it never interferes with an asmdef-based project.
 
 ## Contents
 
-- [Data assets](#data-assets) — `DataAsset`, `Database<T>`, `ConfigService`
+- [Data assets](#data-assets) — `DataAsset`, `Database<T>`, `ConfigService`, JSON serialization
 - [Event bus](#event-bus) — `IEventBus`, `EventBus`
 - [Type selector](#type-selector) — `[TypeSelector]`, `[TypeSelectorName]`
 - [Timer](#timer) — `Timer`
 - [Comment](#comment) — `Comment`
-- [Contracts](#contracts) — animations, back navigation, instantiation, serialization
-- [Newtonsoft.Json integration](#newtonsoftjson-integration)
+- [Abstractions](#abstractions) — the interfaces the other Perfect Core packages are built on
 
 ### Data assets
 
 `DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in
 `folder:name` form. The ID is generated on first validation from the asset's name and its
 parent folder, and can be rebuilt from the inspector's context menu ("Regenerate ID").
-Use it for anything a save file or a config has to reference by name rather than by object
-reference — items, quests, upgrades.
+
+Use it for any static data (for example for configs):
 
 ```csharp
 public class ItemConfig : DataAsset
@@ -55,9 +54,6 @@ public class ItemConfig : DataAsset
     public Sprite Icon => _icon;
 }
 ```
-
-ID generation is editor-only; `Id` itself is a serialized field and reads normally at
-runtime.
 
 `Database<T>` is a `ScriptableObject` list of data assets with `GetById` lookup. It builds
 its dictionary lazily on first access, reports duplicate IDs as errors, and warns when an
@@ -78,6 +74,25 @@ a type mismatch separately, so a bad save file tells you which of the three went
 var configService = new ConfigService(allConfigsById);
 ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
 ```
+
+#### Data assets serialization
+
+The point of a stable ID is what happens at save time, so the JSON side lives here too.
+`DataAssetConverter<T>` writes any `DataAsset` reference as its ID string and reads it back
+through a `ConfigService` — a save file then references configs by name instead of storing
+copies of them. `JsonDataSerializer` is an `IDataSerializer` that wires that converter into
+indented JSON.
+
+```csharp
+var serializer = new JsonDataSerializer(configService);
+
+serializer.Serialize(saveData, filePath);
+SaveData loaded = serializer.Deserialize<SaveData>(filePath);
+```
+
+Both live in a separate assembly that is compiled only when
+`com.unity.nuget.newtonsoft-json` is installed. Without it the assembly is empty and nothing
+else about the package changes.
 
 ### Event bus
 
@@ -167,44 +182,27 @@ binds a label straight to one.
 way it is. Its inspector shows the text as an info or warning box, with an Edit button.
 Both the field and the text compile to nothing in a player build.
 
-### Contracts
+### Abstractions
 
-Perfect Core ships these as interfaces only — the implementations belong in your game,
-where the input system, the scene structure and the tweening library are known.
+Interfaces, and nothing behind them. Perfect UI, Perfect Inventory and Perfect Quests are
+written against these, which is what keeps them independent of any particular tweening library,
+input system or save format. Your own code can implement them the same way.
 
-`IAnimation` and `IShowHideAnimations` let a UI element play show/hide transitions without
-depending on any particular tweening library. Implement them with DOTween, LitMotion,
-Unity's own animation system, or plain coroutines.
+| Interface | Stands in for |
+|---|---|
+| `IAnimation`, `IShowHideAnimations` | Show/hide transitions — DOTween, LitMotion, coroutines, whatever you use |
+| `IBackNavigationHandler`, `IBackNavigationService` | A back-button stack: a handler consumes the action, the service raises `QuitRequested` when nobody did |
+| `IInstantiator` | Instantiation, so a container like VContainer or Zenject can inject into new objects |
+| `IDataSerializer` | A save format: an `Extension` plus `Serialize` and `Deserialize` |
 
-`IBackNavigationHandler` and `IBackNavigationService` describe a back-button stack: a
-handler's `OnBackPressed()` returns `true` to consume the action and stop it propagating,
-and the service raises `QuitRequested` when nothing consumed it.
+The implementations belong in your game, where the input system and the scene structure are
+known.
 
-`IInstantiator` abstracts instantiation so an external container — VContainer, Zenject,
-your own factory — can inject dependencies into newly created objects.
+### Utilities
 
-`IDataSerializer` describes a save format: an `Extension` plus `Serialize` and `Deserialize`
-against a file path.
-
-`RectTransformData` is a serializable snapshot of a `RectTransform`'s anchors, pivot, size
-and position, with `GetData()` / `SetData()` extension methods for capturing and restoring
-a layout.
-
-### Newtonsoft.Json integration
-
-Compiled only when `com.unity.nuget.newtonsoft-json` is installed — without it the assembly
-is empty and nothing else changes.
-
-`JsonDataSerializer` is an `IDataSerializer` writing indented JSON. `DataAssetConverter<T>`
-writes any `DataAsset` reference as its ID string and reads it back through a
-`ConfigService`, so a save file references configs by name instead of storing copies of them.
-
-```csharp
-var serializer = new JsonDataSerializer(configService);
-
-serializer.Serialize(saveData, filePath);
-SaveData loaded = serializer.Deserialize<SaveData>(filePath);
-```
+`RectTransformData` is a serializable snapshot of a `RectTransform`'s anchors, pivot, size and
+position, with `GetData()` / `SetData()` extension methods for capturing a layout and putting it
+back.
 
 ## Inspector attributes
 
