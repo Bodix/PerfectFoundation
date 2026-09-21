@@ -4,30 +4,17 @@ The shared foundation every Perfect Core package is built on.
 
 ## Requirements
 
-Unity 2019.3 or newer.
+- Unity 2019.3 or newer.
 
->The Asset Store build is submitted from Unity 2022.3 because the
-store requires it, but the code itself targets 2019.3 and up.
+    >The Asset Store build is submitted from Unity 2022.3 because the store requires it, but the code itself targets 2019.3 and up.
 
 ## Installation
 
-Import the package from the Asset Store. Perfect Foundation has no hard-coded paths: the folder can
-sit anywhere in your project, and moving it later breaks nothing.
+1. Import the package from the Asset Store.
 
-### Assembly definitions
+    >Perfect Foundation has no hard-coded paths: the folder can sit anywhere in your project, and moving it later breaks nothing.
 
-Perfect Foundation ships as three assemblies:
-
-| Assembly | Platforms | Contents |
-|---|---|---|
-| `PerfectCore.PerfectFoundation` | All | Everything under `Scripts/Runtime` |
-| `PerfectCore.PerfectFoundation.Editor` | Editor | Drawers and inspectors |
-| `PerfectCore.PerfectFoundation.Newtonsoft` | All | JSON integration, compiled only when Newtonsoft.Json is installed |
-
-All three are auto-referenced, so `using PerfectCore.PerfectFoundation;` works straight away in Unity's default
-`Assembly-CSharp` with nothing to set up. If your own code lives in assembly definitions, add
-`PerfectCore.PerfectFoundation` to their references as usual — auto-referencing only ever applies to Unity's
-predefined assemblies, so it never interferes with an asmdef-based project.
+2. [Optional] If your own code lives in assembly definitions, add PerfectCore.PerfectFoundation to their references
 
 ## Contents
 
