@@ -30,10 +30,10 @@ The shared foundation every Perfect Core package is built on.
 
 `DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
 
-This ID allows configuration files to be serialized correctly: the configuration is serialized and deserialized by its ID (and only by it), rather than by saving every individual configuration value. This offers two advantages:
+This ID allows configuration files to be serialized correctly: the configuration is serialized and deserialized only by its ID, rather than by saving every individual configuration value. This offers two advantages:
 
 1. Serializable data types (such as game saves or game settings) take up less space.
-2. It’s easier to add changes to the game, since the serialized data contains no configuration information (only the ID).
+2. It’s easier to add changes to the game, since the serialized data contains no configuration values (only the ID). This way, you don't have to overwrite anything. You simply update the configuration files, and everything updates automatically for the players.
 
 Use it for any static data, for example for configs:
 
