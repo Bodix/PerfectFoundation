@@ -59,7 +59,9 @@ public class ItemConfig : DataAsset
 
 #### Serialization
 
-For now, automatic serialization via Newtonsoft.Json is supported out of the box. Support for automatic serialization via ProtoBuf (binary serialization) is planned for the future.
+>For now, automatic serialization via Newtonsoft.Json is supported out of the box. It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed. 
+
+>Support for automatic binary serialization via ProtoBuf is planned for the future.
 
 `JsonDataSerializer` does all the serialization for you. Give it a `ConfigService` and every `DataAsset` reference in your save data — any subclass, at any depth — is written as an ID and resolved back on load.
 
@@ -70,16 +72,15 @@ serializer.Serialize(saveData, filePath);
 SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 ```
 
->It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
-
 #### ConfigService
 
 `ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several databases, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
 
 ```csharp
-// Load every config by label, then register the service (VContainer shown here).
+// Load every config by label.
 IList<DataAsset> configs = await Addressables.LoadAssetsAsync<DataAsset>("configs", null).Task;
 
+// Register the service in DI container (VContainer shown here).
 builder.RegisterInstance(new ConfigService(configs.ToDictionary(config => config.Id)));
 ```
 
@@ -94,7 +95,7 @@ ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
 
 #### Database\<T>
 
-`Database<T>` is the simpler alternative — a `ScriptableObject` holding a static, hand-filled list of data assets with the same `GetById` lookup. Use it when there is no container to register a service into, or when one designer-editable list is all a feature needs.
+`Database<T>` is the simpler alternative — a `ScriptableObject` holding a static, hand-filled list of data assets with the same `GetById` lookup. Use it when there is no container to register a service into, or when one designer-editable list is all a feature needs. It builds its dictionary lazily on first access, reports duplicate IDs as errors and warns when an ID is missing.
 
 ```csharp
 [CreateAssetMenu(menuName = "Game/Item Database")]
@@ -102,8 +103,6 @@ public class ItemDatabase : Database<ItemConfig> { }
 
 ItemConfig sword = itemDatabase.GetById("weapons:sword");
 ```
-
-It builds its dictionary lazily on first access, reports duplicate IDs as errors and warns when an ID is missing. A database also makes a convenient source for the dictionary a `ConfigService` is built from.
 
 ### Event bus
 
