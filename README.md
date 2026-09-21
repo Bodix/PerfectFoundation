@@ -28,7 +28,13 @@ The shared foundation every Perfect Core package is built on.
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is
+generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
+
+This ID allows configuration files to be serialized correctly: the configuration is serialized and deserialized by its ID (and only by it), rather than by saving every individual configuration value. This offers two advantages:
+
+1. Serializable data types (such as game saves or game settings) take up less space.
+2. It’s easier to add changes to the game, since the serialized data contains no configuration information (only the ID).
 
 Use it for any static data, for example for configs:
 
@@ -42,9 +48,7 @@ public class ItemConfig : DataAsset
 }
 ```
 
-That ID is what makes a `DataAsset` safe to save. A reference to a `ScriptableObject` cannot be written into a save file — a serializer copies its values instead, so every save carries a duplicate of the config that goes stale the moment you re-balance it. A `DataAsset` is saved as its ID and resolved back to the same asset on load: saves stay small, and content can keep changing under them.
-
-`JsonDataSerializer` does this for you. Give it a `ConfigService` and every `DataAsset` reference in your save data — any subclass, at any depth — is written as an ID and resolved back on load. Nothing to set up per type.
+`JsonDataSerializer` does all the serialization for you. Give it a `ConfigService` and every `DataAsset` reference in your save data — any subclass, at any depth — is written as an ID and resolved back on load.
 
 ```csharp
 var serializer = new JsonDataSerializer(configService);
@@ -55,7 +59,7 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 
 >It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
-`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
+`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several databases, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
 
 ```csharp
 // Load every config by label, then register the service (VContainer shown here).
