@@ -28,8 +28,7 @@ The shared foundation every Perfect Core package is built on.
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is
-generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
 
 This ID allows configuration files to be serialized correctly: the configuration is serialized and deserialized by its ID (and only by it), rather than by saving every individual configuration value. This offers two advantages:
 
@@ -158,7 +157,7 @@ Callbacks passed to `Start` last for that run only and are cleared when the time
 
 ### Structs
 
-`TransformData` and `RectTransformData` are serializable snapshots of a transform's state. `GetData()` captures one, `SetData()` puts it back.
+`TransformData` and `RectTransformData` are serializable snapshots of a transform's state. Both can be serialized to a save file.
 
 ```csharp
 // Position, rotation, local scale.
@@ -169,8 +168,6 @@ transform.SetData(snapshot);
 RectTransformData layout = rectTransform.GetData();
 rectTransform.SetData(layout);
 ```
-
-`TransformData.Default` is the identity snapshot. Being plain `[Serializable]` structs, both can be stored in a field, edited in the inspector and written to a save file.
 
 ### Abstractions
 
