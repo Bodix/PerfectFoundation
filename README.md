@@ -121,12 +121,65 @@ public readonly struct ItemCollected
         Amount = amount;
     }
 }
+```
 
-eventBus.Subscribe<ItemCollected>(OnItemCollected);
-eventBus.Publish(new ItemCollected(item, amount));
-eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
+The publisher needs nothing but the bus and the message. It never learns who is listening, or whether anyone is.
+
+```csharp
+public class LootPickup : MonoBehaviour
+{
+    [Inject]
+    private readonly IEventBus _eventBus;
+
+    [SerializeField]
+    private ItemConfig _item;
+
+    [SerializeField]
+    private int _amount = 1;
+
+    private void OnTriggerEnter(Collider other)
+    {
+        _eventBus.Publish(new ItemCollected(_item, _amount));
+
+        Destroy(gameObject);
+    }
+}
+```
+
+The subscriber is any class that can reach the same bus instance. `Subscribe<T>` takes an `Action<T>`, so a handler is simply a method with one parameter of the message type.
+
+```csharp
+public class CollectionLog : MonoBehaviour
+{
+    [Inject]
+    private readonly IEventBus _eventBus;
+
+    [SerializeField]
+    private TMP_Text _label;
+
+    // Subscribe and unsubscribe in matching pairs — OnEnable/OnDisable here,
+    // constructor/Dispose in a plain C# class.
+    private void OnEnable() => _eventBus.Subscribe<ItemCollected>(OnItemCollected);
+
+    private void OnDisable() => _eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
+
+    // The handler. Its signature is what Action<ItemCollected> expects.
+    private void OnItemCollected(ItemCollected message)
+    {
+        _label.text = $"Collected {message.Amount} of {message.Item.Id}";
+    }
+}
+```
+
+>Pass a method, not a lambda: `Unsubscribe` needs the same handler back, and a lambda written twice is two different delegates.
+
+`Publish` delivers the message to every handler subscribed to that exact type. Subscribing, unsubscribing and publishing from inside a handler are all safe, and an exception thrown by one handler is logged without stopping the rest.
+
+```csharp
 eventBus.Clear(); // Drops every subscription — useful when tearing down a scene or a test.
 ```
+
+>`Clear` is defined on `EventBus` itself rather than on `IEventBus`, so call it on the instance you own — usually the one that created the bus.
 
 >The author of the Perfect Foundation package recommends using standard C# events rather than this event bus. The event bus exists solely to make certain Perfect Core packages (such as the quest package) as versatile and independent as possible.
 
@@ -152,12 +205,22 @@ Renaming or moving a type that is already serialized breaks the reference, as it
 
 ### Timer
 
-`Timer` is a `MonoBehaviour` countdown that reports progress through both callbacks and events.
+`Timer` is a `MonoBehaviour` countdown that reports progress in two ways: callbacks passed to `Start`, and events on the component itself.
 
 ```csharp
-// Callbacks passed to `Start` last for that run only
-// and are cleared when the timer completes or stops; the events persist.
+// Every callback is optional — pass only the ones you need, as named arguments.
+timer.Start(
+    60f,
+    onStart: () => Debug.Log("Round started"),
+    onUpdate: deltaTime => _fill.fillAmount = timer.RemainingTime / 60f,
+    onStop: () => Debug.Log("Round cancelled"),
+    onComplete: () => Debug.Log("Time is up"));
+
+// Only the one that matters:
 timer.Start(60f, onComplete: () => Debug.Log("Time is up"));
+
+// Or none at all, when the events below do the reporting:
+timer.Start(60f);
 
 timer.Pause();
 
@@ -167,6 +230,44 @@ timer.SetRemainingTime(timer.RemainingTime + 10f);
 
 timer.Stop();
 ```
+
+The component also provides public events. They live on the timer instance, so anything holding a reference can listen without being the code that starts the run.
+
+```csharp
+public class RoundHud : MonoBehaviour
+{
+    [SerializeField]
+    private Timer _timer;
+    [SerializeField]
+    private TMP_Text _label;
+
+    private void OnEnable()
+    {
+        _timer.Started += OnStarted;
+        _timer.Updated += OnUpdated;
+        _timer.Stopped += OnStopped;
+        _timer.Completed += OnCompleted;
+    }
+
+    private void OnDisable()
+    {
+        _timer.Started -= OnStarted;
+        _timer.Updated -= OnUpdated;
+        _timer.Stopped -= OnStopped;
+        _timer.Completed -= OnCompleted;
+    }
+
+    private void OnStarted() => _label.enabled = true;
+
+    private void OnUpdated(float deltaTime) => _label.text = $"{_timer.RemainingTime:F1}";
+
+    private void OnStopped() => _label.enabled = false;
+
+    private void OnCompleted() => _label.text = "0.0";
+}
+```
+
+**Callbacks are per-run. Events are per-instance.** That is the whole difference, and it decides which one a piece of code should use. So a callback answers *what should happen at the end of this particular run*, and an event answers *who wants to know every time this timer finishes*. Starting a new run never has to undo the callbacks of the previous one; an event subscription always has to be undone by hand.
 
 ### Comment
 
