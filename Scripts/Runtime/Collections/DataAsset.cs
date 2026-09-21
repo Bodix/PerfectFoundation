@@ -4,6 +4,7 @@
 
 using System.IO;
 using System.Text.RegularExpressions;
+using PerfectCore.PerfectFoundation.NaughtyAttributes;
 using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
@@ -31,9 +32,9 @@ namespace PerfectCore.PerfectFoundation
 
 		/// <summary>
 		/// Rebuilds the ID from the asset name and its folder.
-		/// Available from the inspector's context menu (the three dots in the header).
+		/// Available from the "Regenerate ID" button in the inspector.
 		/// </summary>
-		[ContextMenu("Regenerate ID")]
+		[Button("Regenerate ID")]
 		public void GenerateId()
 		{
 			string expectedName = ReplaceNonAlphanumerics(name.ToLower());

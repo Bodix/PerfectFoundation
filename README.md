@@ -18,16 +18,17 @@ The shared foundation every Perfect Core package is built on.
 
 ## Contents
 
-- [Data assets](#data-assets) — `DataAsset`, `Database<T>`, `ConfigService`, JSON serialization
+- [Data assets](#data-assets) — `DataAsset`, JSON serialization, `Database<T>`, `ConfigService`
 - [Event bus](#event-bus) — `IEventBus`, `EventBus`
 - [Type selector](#type-selector) — `[TypeSelector]`, `[TypeSelectorName]`
 - [Timer](#timer) — `Timer`
 - [Comment](#comment) — `Comment`
+- [Structs](#structs) — `TransformData`, `RectTransformData`
 - [Abstractions](#abstractions) — the interfaces the other Perfect Core packages are built on
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` form. The ID is generated on first validation from the asset's name and its parent folder, and can be rebuilt from the inspector's context menu ("Regenerate ID").
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` form. The ID is generated on first validation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
 
 Use it for any static data (for example for configs):
 
@@ -39,6 +40,19 @@ public class ItemConfig : DataAsset
     public Sprite Icon => _icon;
 }
 ```
+
+That ID is the point of the class: it is what lets static data be saved correctly. A reference to a `ScriptableObject` cannot be written into a save file — a serializer copies its values instead, so every save carries a duplicate of the config that goes stale the moment you re-balance it. A `DataAsset` is written as its ID and resolved back to the same asset on load, so saves stay small and content can keep changing under them.
+
+`DataAssetConverter<T>` does that for JSON: it writes any `DataAsset` reference as its ID string and reads it back through a `ConfigService` — the ID-to-asset lookup described below. `JsonDataSerializer` is an `IDataSerializer` that wires that converter into indented JSON.
+
+```csharp
+var serializer = new JsonDataSerializer(configService);
+
+serializer.Serialize(saveData, filePath);
+SaveData loaded = serializer.Deserialize<SaveData>(filePath);
+```
+
+Both live in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
 `Database<T>` is a `ScriptableObject` list of data assets with `GetById` lookup. It builds its dictionary lazily on first access, reports duplicate IDs as errors, and warns when an ID is missing.
 
@@ -55,17 +69,6 @@ ItemConfig sword = itemDatabase.GetById("weapons:sword");
 var configService = new ConfigService(allConfigsById);
 ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
 ```
-
-Saving uses those IDs: `DataAssetConverter<T>` writes a `DataAsset` reference as its ID string and reads it back through a `ConfigService`, so a save file references configs instead of storing copies of them. `JsonDataSerializer` is an `IDataSerializer` that wires that converter into indented JSON.
-
-```csharp
-var serializer = new JsonDataSerializer(configService);
-
-serializer.Serialize(saveData, filePath);
-SaveData loaded = serializer.Deserialize<SaveData>(filePath);
-```
-
-Both live in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
 ### Event bus
 
@@ -141,6 +144,23 @@ Callbacks passed to `Start` last for that run only and are cleared when the time
 
 `Comment` is an editor-only note you attach to a GameObject to explain why it is set up the way it is. Its inspector shows the text as an info or warning box, with an Edit button. Both the field and the text compile to nothing in a player build.
 
+### Structs
+
+Serializable snapshots of a transform, with `GetData()` / `SetData()` extension methods for capturing a state and putting it back.
+
+| Struct | Captures |
+|---|---|
+| `TransformData` | Position, rotation and local scale of a `Transform`. `TransformData.Default` is the identity snapshot |
+| `RectTransformData` | Anchored position, size delta, anchors and pivot of a `RectTransform` |
+
+```csharp
+TransformData snapshot = transform.GetData();
+
+transform.SetData(snapshot);
+```
+
+Being plain `[Serializable]` structs, both can be stored in a field, edited in the inspector and written to a save file.
+
 ### Abstractions
 
 Interfaces, and nothing behind them. Perfect UI, Perfect Inventory and Perfect Quests are written against these, which is what keeps them independent of any particular tweening library, input system or save format. Your own code can implement them the same way.
@@ -153,10 +173,6 @@ Interfaces, and nothing behind them. Perfect UI, Perfect Inventory and Perfect Q
 | `IDataSerializer` | A save format: an `Extension` plus `Serialize` and `Deserialize` |
 
 The implementations belong in your game, where the input system and the scene structure are known.
-
-### Utilities
-
-`RectTransformData` is a serializable snapshot of a `RectTransform`'s anchors, pivot, size and position, with `GetData()` / `SetData()` extension methods for capturing a layout and putting it back.
 
 ## Inspector attributes
 

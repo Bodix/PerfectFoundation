@@ -13,7 +13,7 @@ First public release.
 
 - **`DataAsset`** - `ScriptableObject` base class carrying a stable, human-readable
   identifier in `folder:name` form. The identifier is generated on first validation
-  and can be rebuilt from the inspector's context menu ("Regenerate ID").
+  and can be rebuilt with the "Regenerate ID" button in the inspector.
 - **`Database<T>`** - `ScriptableObject` list of data assets with `GetById` lookup
   and duplicate-identifier reporting.
 - **`ConfigService`** - runtime registry that resolves a `DataAsset` by identifier
@@ -35,7 +35,7 @@ First public release.
   back-button stack.
 - **`IInstantiator`** - abstraction over instantiation, so an external container can
   inject dependencies into newly created objects.
-- **`IDataSerializer`** and **`RectTransformData`** utilities.
+- **`IDataSerializer`**, **`TransformData`** and **`RectTransformData`** utilities.
 - **Newtonsoft.Json integration** (optional) - `JsonDataSerializer` and
   `DataAssetConverter`, compiled only when `com.unity.nuget.newtonsoft-json` is
   present in the project.
