@@ -145,6 +145,8 @@ Renaming or moving a type that is already serialized breaks the reference, as it
 `Timer` is a `MonoBehaviour` countdown that reports progress through both callbacks and events.
 
 ```csharp
+// Callbacks passed to `Start` last for that run only
+// and are cleared when the timer completes or stops; the events persist.
 timer.Start(60f, onComplete: () => Debug.Log("Time is up"));
 
 timer.Pause();
@@ -155,8 +157,6 @@ timer.SetRemainingTime(timer.RemainingTime + 10f);
 
 timer.Stop();
 ```
-
-Callbacks passed to `Start` last for that run only and are cleared when the timer completes or stops; the events persist. `Start` only works in play mode. Perfect UI's `UiTimerText` binds a label straight to one.
 
 ### Comment
 
