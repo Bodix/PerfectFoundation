@@ -18,7 +18,7 @@ The shared foundation every Perfect Core package is built on.
 
 ## Contents
 
-- [Data assets](#data-assets) — `DataAsset`, JSON serialization, `Database<T>`, `ConfigService`
+- [Data assets](#data-assets) — `DataAsset`, JSON serialization, `ConfigService`, `Database<T>`
 - [Event bus](#event-bus) — `IEventBus`, `EventBus`
 - [Type selector](#type-selector) — `[TypeSelector]`, `[TypeSelectorName]`
 - [Timer](#timer) — `Timer`
@@ -28,7 +28,7 @@ The shared foundation every Perfect Core package is built on.
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` form. The ID is generated on first validation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is generated on first validation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
 
 Use it for any static data (for example for configs):
 
@@ -41,9 +41,9 @@ public class ItemConfig : DataAsset
 }
 ```
 
-That ID is the point of the class: it is what lets static data be saved correctly. A reference to a `ScriptableObject` cannot be written into a save file — a serializer copies its values instead, so every save carries a duplicate of the config that goes stale the moment you re-balance it. A `DataAsset` is written as its ID and resolved back to the same asset on load, so saves stay small and content can keep changing under them.
+That ID is what makes a `DataAsset` safe to save. A reference to a `ScriptableObject` cannot be written into a save file — a serializer copies its values instead, so every save carries a duplicate of the config that goes stale the moment you re-balance it. A `DataAsset` is saved as its ID and resolved back to the same asset on load: saves stay small, and content can keep changing under them.
 
-`DataAssetConverter<T>` does that for JSON: it writes any `DataAsset` reference as its ID string and reads it back through a `ConfigService` — the ID-to-asset lookup described below. `JsonDataSerializer` is an `IDataSerializer` that wires that converter into indented JSON.
+`JsonDataSerializer` does this for you. Give it a `ConfigService` and every `DataAsset` reference in your save data — any subclass, at any depth — is written as an ID and resolved back on load. Nothing to set up per type.
 
 ```csharp
 var serializer = new JsonDataSerializer(configService);
@@ -52,9 +52,28 @@ serializer.Serialize(saveData, filePath);
 SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 ```
 
-Both live in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
+>It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
-`Database<T>` is a `ScriptableObject` list of data assets with `GetById` lookup. It builds its dictionary lazily on first access, reports duplicate IDs as errors, and warns when an ID is missing.
+`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several, from Addressables, from anywhere else — and hand it over.
+
+```csharp
+var configService = new ConfigService(allConfigsById);
+
+ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
+```
+
+It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config — `JsonDataSerializer` included — receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
+
+```csharp
+// Load every config by label, then register the service (VContainer shown here).
+IList<DataAsset> configs = await Addressables.LoadAssetsAsync<DataAsset>("configs", null).Task;
+
+builder.RegisterInstance(new ConfigService(configs.ToDictionary(config => config.Id)));
+```
+
+A failed lookup names the problem: an empty ID, a missing ID and a type mismatch are reported as three separate errors, so a broken save file tells you which of the three it is.
+
+`Database<T>` is the simpler alternative — a `ScriptableObject` holding a static, hand-filled list of data assets with the same `GetById` lookup. Use it when there is no container to register a service into, or when one designer-editable list is all a feature needs.
 
 ```csharp
 [CreateAssetMenu(menuName = "Game/Item Database")]
@@ -63,12 +82,7 @@ public class ItemDatabase : Database<ItemConfig> { }
 ItemConfig sword = itemDatabase.GetById("weapons:sword");
 ```
 
-`ConfigService` resolves a `DataAsset` by ID from a dictionary you build at startup — from one database, from several, or from anywhere else. It reports an empty ID, a missing ID and a type mismatch separately, so a bad save file tells you which of the three went wrong.
-
-```csharp
-var configService = new ConfigService(allConfigsById);
-ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
-```
+It builds its dictionary lazily on first access, reports duplicate IDs as errors and warns when an ID is missing. A database also makes a convenient source for the dictionary a `ConfigService` is built from.
 
 ### Event bus
 
@@ -92,7 +106,11 @@ eventBus.Publish(new ItemCollected(item, amount));
 eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
 ```
 
-Subscribing, unsubscribing and nested publishing are all safe during dispatch: `Publish` takes a snapshot of the handler list before invoking it. Handlers are isolated — an exception in one is logged and the rest still run. The bus locks around its handler table, so subscriptions from other threads are safe; handlers themselves run on whichever thread called `Publish`, so marshal to the main thread yourself if a handler touches the Unity API.
+The bus is safe to use in the ways that usually break a hand-written one:
+
+- A handler may subscribe, unsubscribe or publish another event while an event is being delivered.
+- An exception in one handler is logged, and the remaining handlers still run.
+- Subscribing from another thread is safe. Handlers run on whichever thread called `Publish`, so switch to the main thread yourself before touching the Unity API.
 
 `EventBus.Clear()` drops every subscription — useful when tearing down a scene or a test.
 
@@ -146,20 +164,19 @@ Callbacks passed to `Start` last for that run only and are cleared when the time
 
 ### Structs
 
-Serializable snapshots of a transform, with `GetData()` / `SetData()` extension methods for capturing a state and putting it back.
-
-| Struct | Captures |
-|---|---|
-| `TransformData` | Position, rotation and local scale of a `Transform`. `TransformData.Default` is the identity snapshot |
-| `RectTransformData` | Anchored position, size delta, anchors and pivot of a `RectTransform` |
+`TransformData` and `RectTransformData` are serializable snapshots of a transform's state. `GetData()` captures one, `SetData()` puts it back.
 
 ```csharp
+// Position, rotation, local scale.
 TransformData snapshot = transform.GetData();
-
 transform.SetData(snapshot);
+
+// Anchored position, size delta, anchors, pivot.
+RectTransformData layout = rectTransform.GetData();
+rectTransform.SetData(layout);
 ```
 
-Being plain `[Serializable]` structs, both can be stored in a field, edited in the inspector and written to a save file.
+`TransformData.Default` is the identity snapshot. Being plain `[Serializable]` structs, both can be stored in a field, edited in the inspector and written to a save file.
 
 ### Abstractions
 
@@ -174,15 +191,16 @@ Interfaces, and nothing behind them. Perfect UI, Perfect Inventory and Perfect Q
 
 The implementations belong in your game, where the input system and the scene structure are known.
 
-## Inspector attributes
+## [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes)
 
-The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) and uses it for its own inspectors. Its assemblies and namespace are renamed to `PerfectCore.PerfectFoundation.NaughtyAttributes`, so a project that already contains the original keeps compiling.
+The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) and uses it for its own
+inspectors.
 
-The attributes work across your whole project out of the box — put `[Button]`, `[ShowIf]` or `[Foldout]` on any MonoBehaviour and it draws. A component that carries no such attribute is drawn exactly as Unity would draw it.
+>Its assemblies and namespace are renamed to `PerfectCore.PerfectFoundation.NaughtyAttributes`, so a project that already contains the original keeps compiling.
 
-One thing to know if your project already uses another inspector extension. Unity allows a single custom editor per type, and every tool of this kind — Odin Inspector, the original NaughtyAttributes, Tri-Inspector — claims `UnityEngine.Object` to do its work. When two are installed, only one wins, and which one is not deterministic; the symptom is that one tool's attributes quietly stop drawing.
+If you already use another inspector extension — Odin Inspector, the original NaughtyAttributes, Tri-Inspector — you can turn Perfect Foundation's project-wide inspector off. Add `PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player → Scripting Define Symbols**: the project-wide inspector is left to the other tool, and Perfect Foundation's own components keep their attributes regardless.
 
-If that happens, add `PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player → Scripting Define Symbols**. Perfect Foundation then leaves the project-wide inspector to the other tool, and its own components keep their attributes regardless.
+>Unity allows a single custom editor per type, and every tool of this kind claims `UnityEngine.Object` to do its work. With two installed, only one wins — and which one is not deterministic. The symptom is that one tool's attributes quietly stop drawing.
 
 ## Third-party notice
 
