@@ -1,6 +1,7 @@
 # TODO (internal)
 
-Not shipped: Unity ignores folders ending with `~`, so this file is not imported
+>**Not shipped:**
+<br>Unity ignores folders ending with `~`, so this file is not imported
 into the project and is not part of the Asset Store package. It keeps the design
 backlog that used to live as TODO comments in public source files.
 
@@ -24,5 +25,3 @@ backlog that used to live as TODO comments in public source files.
 
 - Check for an enabled GameObject in `Start`, and review the `Awake` logic afterwards.
 - Consider removing the `_onStart` callback (the `Started` event covers it).
-- An inspector button `[Button("Start (60 sec)")] TestStart()` was removed before the
-  1.0.0 release. Restore it on `Timer` if a one-click play-mode test is wanted.
