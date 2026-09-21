@@ -28,14 +28,16 @@ The shared foundation every Perfect Core package is built on.
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is generated on first validation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is
+generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
 
-Use it for any static data (for example for configs):
+Use it for any static data, for example for configs:
 
 ```csharp
 public class ItemConfig : DataAsset
 {
-    [SerializeField] private Sprite _icon;
+    [SerializeField] 
+    private Sprite _icon;
 
     public Sprite Icon => _icon;
 }
@@ -54,15 +56,8 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 
 >It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
-`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several, from Addressables, from anywhere else — and hand it over.
-
-```csharp
-var configService = new ConfigService(allConfigsById);
-
-ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
-```
-
-It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config — `JsonDataSerializer` included — receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
+`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one
+database, from several, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
 
 ```csharp
 // Load every config by label, then register the service (VContainer shown here).
@@ -71,7 +66,11 @@ IList<DataAsset> configs = await Addressables.LoadAssetsAsync<DataAsset>("config
 builder.RegisterInstance(new ConfigService(configs.ToDictionary(config => config.Id)));
 ```
 
-A failed lookup names the problem: an empty ID, a missing ID and a type mismatch are reported as three separate errors, so a broken save file tells you which of the three it is.
+Then you can use it conveniently:
+
+```csharp
+ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
+```
 
 `Database<T>` is the simpler alternative — a `ScriptableObject` holding a static, hand-filled list of data assets with the same `GetById` lookup. Use it when there is no container to register a service into, or when one designer-editable list is all a feature needs.
 
@@ -104,15 +103,8 @@ public readonly struct ItemCollected
 eventBus.Subscribe<ItemCollected>(OnItemCollected);
 eventBus.Publish(new ItemCollected(item, amount));
 eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
+eventBus.Clear(); // Drops every subscription — useful when tearing down a scene or a test.
 ```
-
-The bus is safe to use in the ways that usually break a hand-written one:
-
-- A handler may subscribe, unsubscribe or publish another event while an event is being delivered.
-- An exception in one handler is logged, and the remaining handlers still run.
-- Subscribing from another thread is safe. Handlers run on whichever thread called `Publish`, so switch to the main thread yourself before touching the Unity API.
-
-`EventBus.Clear()` drops every subscription — useful when tearing down a scene or a test.
 
 ### Type selector
 
