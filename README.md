@@ -14,7 +14,7 @@ The shared foundation every Perfect Core package is built on.
 
     >Perfect Foundation has no hard-coded paths: the folder can sit anywhere in your project, and moving it later breaks nothing.
 
-2. [Optional] If your own code lives in assembly definitions, add PerfectCore.PerfectFoundation to their references
+2. [Optional] If your own code lives in assembly definitions, add PerfectCore.PerfectFoundation to their references.
 
 ## Contents
 
@@ -27,9 +27,7 @@ The shared foundation every Perfect Core package is built on.
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in
-`folder:name` form. The ID is generated on first validation from the asset's name and its
-parent folder, and can be rebuilt from the inspector's context menu ("Regenerate ID").
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` form. The ID is generated on first validation from the asset's name and its parent folder, and can be rebuilt from the inspector's context menu ("Regenerate ID").
 
 Use it for any static data (for example for configs):
 
@@ -42,9 +40,7 @@ public class ItemConfig : DataAsset
 }
 ```
 
-`Database<T>` is a `ScriptableObject` list of data assets with `GetById` lookup. It builds
-its dictionary lazily on first access, reports duplicate IDs as errors, and warns when an
-ID is missing.
+`Database<T>` is a `ScriptableObject` list of data assets with `GetById` lookup. It builds its dictionary lazily on first access, reports duplicate IDs as errors, and warns when an ID is missing.
 
 ```csharp
 [CreateAssetMenu(menuName = "Game/Item Database")]
@@ -53,22 +49,14 @@ public class ItemDatabase : Database<ItemConfig> { }
 ItemConfig sword = itemDatabase.GetById("weapons:sword");
 ```
 
-`ConfigService` resolves a `DataAsset` by ID from a dictionary you build at startup — from
-one database, from several, or from anywhere else. It reports an empty ID, a missing ID and
-a type mismatch separately, so a bad save file tells you which of the three went wrong.
+`ConfigService` resolves a `DataAsset` by ID from a dictionary you build at startup — from one database, from several, or from anywhere else. It reports an empty ID, a missing ID and a type mismatch separately, so a bad save file tells you which of the three went wrong.
 
 ```csharp
 var configService = new ConfigService(allConfigsById);
 ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
 ```
 
-#### Data assets serialization
-
-The point of a stable ID is what happens at save time, so the JSON side lives here too.
-`DataAssetConverter<T>` writes any `DataAsset` reference as its ID string and reads it back
-through a `ConfigService` — a save file then references configs by name instead of storing
-copies of them. `JsonDataSerializer` is an `IDataSerializer` that wires that converter into
-indented JSON.
+Saving uses those IDs: `DataAssetConverter<T>` writes a `DataAsset` reference as its ID string and reads it back through a `ConfigService`, so a save file references configs instead of storing copies of them. `JsonDataSerializer` is an `IDataSerializer` that wires that converter into indented JSON.
 
 ```csharp
 var serializer = new JsonDataSerializer(configService);
@@ -77,9 +65,7 @@ serializer.Serialize(saveData, filePath);
 SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 ```
 
-Both live in a separate assembly that is compiled only when
-`com.unity.nuget.newtonsoft-json` is installed. Without it the assembly is empty and nothing
-else about the package changes.
+Both live in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
 ### Event bus
 
@@ -103,43 +89,33 @@ eventBus.Publish(new ItemCollected(item, amount));
 eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
 ```
 
-Subscribing, unsubscribing and nested publishing are all safe during dispatch: `Publish`
-takes a snapshot of the handler list before invoking it. Handlers are isolated — an
-exception in one is logged and the rest still run. The bus locks around its handler table,
-so subscriptions from other threads are safe; handlers themselves run on whichever thread
-called `Publish`, so marshal to the main thread yourself if a handler touches the Unity API.
+Subscribing, unsubscribing and nested publishing are all safe during dispatch: `Publish` takes a snapshot of the handler list before invoking it. Handlers are isolated — an exception in one is logged and the rest still run. The bus locks around its handler table, so subscriptions from other threads are safe; handlers themselves run on whichever thread called `Publish`, so marshal to the main thread yourself if a handler touches the Unity API.
 
 `EventBus.Clear()` drops every subscription — useful when tearing down a scene or a test.
 
 ### Type selector
 
-`[TypeSelector]` turns a `[SerializeReference]` field into a searchable dropdown of every
-concrete `[Serializable]` type derived from the field's type.
+`[TypeSelector]` turns a `[SerializeReference]` field into a searchable dropdown of every concrete `[Serializable]` type derived from the field's type.
 
 ```csharp
 [SerializeField, SerializeReference, TypeSelector]
 private List<QuestObjective> _objectives = new List<QuestObjective>();
 ```
 
-A type shows up in the dropdown when it is public (or public nested), non-abstract,
-non-generic, marked `[Serializable]`, and not derived from `UnityEngine.Object`.
+A type shows up in the dropdown when it is public (or public nested), non-abstract, non-generic, marked `[Serializable]`, and not derived from `UnityEngine.Object`.
 
-`[TypeSelectorName("...")]` overrides how a type is labelled. Without it, the nicified
-class name is used.
+`[TypeSelectorName("...")]` overrides how a type is labelled. Without it, the nicified class name is used.
 
 ```csharp
 [Serializable, TypeSelectorName("Kill N enemies")]
 public class KillEnemiesObjective : QuestObjective { }
 ```
 
-Renaming or moving a type that is already serialized breaks the reference, as it does with
-any `[SerializeReference]` field. Use `[MovedFrom]` when you rename one.
+Renaming or moving a type that is already serialized breaks the reference, as it does with any `[SerializeReference]` field. Use `[MovedFrom]` when you rename one.
 
 ### Timer
 
-`Timer` is a `MonoBehaviour` countdown that disables itself while idle, so an unused timer
-costs nothing per frame. It ticks on `Update` or `FixedUpdate` — set `UpdateMethod` — and
-reports progress through both callbacks and events.
+`Timer` is a `MonoBehaviour` countdown that disables itself while idle, so an unused timer costs nothing per frame. It ticks on `Update` or `FixedUpdate` — set `UpdateMethod` — and reports progress through both callbacks and events.
 
 ```csharp
 timer.Start(60f, onComplete: () => Debug.Log("Time is up"));
@@ -159,21 +135,15 @@ timer.SetRemainingTime(timer.RemainingTime + 10f);
 | `RemainingTime`, `IsStarted`, `IsPaused` | |
 | `Started`, `Updated`, `Stopped`, `Completed` | Events, alongside the per-call callbacks |
 
-Callbacks passed to `Start` last for that run only and are cleared when the timer completes
-or stops; the events persist. `Start` only works in play mode. Perfect UI's `UiTimerText`
-binds a label straight to one.
+Callbacks passed to `Start` last for that run only and are cleared when the timer completes or stops; the events persist. `Start` only works in play mode. Perfect UI's `UiTimerText` binds a label straight to one.
 
 ### Comment
 
-`Comment` is an editor-only note you attach to a GameObject to explain why it is set up the
-way it is. Its inspector shows the text as an info or warning box, with an Edit button.
-Both the field and the text compile to nothing in a player build.
+`Comment` is an editor-only note you attach to a GameObject to explain why it is set up the way it is. Its inspector shows the text as an info or warning box, with an Edit button. Both the field and the text compile to nothing in a player build.
 
 ### Abstractions
 
-Interfaces, and nothing behind them. Perfect UI, Perfect Inventory and Perfect Quests are
-written against these, which is what keeps them independent of any particular tweening library,
-input system or save format. Your own code can implement them the same way.
+Interfaces, and nothing behind them. Perfect UI, Perfect Inventory and Perfect Quests are written against these, which is what keeps them independent of any particular tweening library, input system or save format. Your own code can implement them the same way.
 
 | Interface | Stands in for |
 |---|---|
@@ -182,40 +152,25 @@ input system or save format. Your own code can implement them the same way.
 | `IInstantiator` | Instantiation, so a container like VContainer or Zenject can inject into new objects |
 | `IDataSerializer` | A save format: an `Extension` plus `Serialize` and `Deserialize` |
 
-The implementations belong in your game, where the input system and the scene structure are
-known.
+The implementations belong in your game, where the input system and the scene structure are known.
 
 ### Utilities
 
-`RectTransformData` is a serializable snapshot of a `RectTransform`'s anchors, pivot, size and
-position, with `GetData()` / `SetData()` extension methods for capturing a layout and putting it
-back.
+`RectTransformData` is a serializable snapshot of a `RectTransform`'s anchors, pivot, size and position, with `GetData()` / `SetData()` extension methods for capturing a layout and putting it back.
 
 ## Inspector attributes
 
-The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes)
-and uses it for its own inspectors. Its assemblies and namespace are renamed to
-`PerfectCore.PerfectFoundation.NaughtyAttributes`, so a project that already contains the original keeps
-compiling.
+The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) and uses it for its own inspectors. Its assemblies and namespace are renamed to `PerfectCore.PerfectFoundation.NaughtyAttributes`, so a project that already contains the original keeps compiling.
 
-The attributes work across your whole project out of the box — put `[Button]`, `[ShowIf]` or
-`[Foldout]` on any MonoBehaviour and it draws. A component that carries no such attribute is
-drawn exactly as Unity would draw it.
+The attributes work across your whole project out of the box — put `[Button]`, `[ShowIf]` or `[Foldout]` on any MonoBehaviour and it draws. A component that carries no such attribute is drawn exactly as Unity would draw it.
 
-One thing to know if your project already uses another inspector extension. Unity allows a
-single custom editor per type, and every tool of this kind — Odin Inspector, the original
-NaughtyAttributes, Tri-Inspector — claims `UnityEngine.Object` to do its work. When two are
-installed, only one wins, and which one is not deterministic; the symptom is that one tool's
-attributes quietly stop drawing.
+One thing to know if your project already uses another inspector extension. Unity allows a single custom editor per type, and every tool of this kind — Odin Inspector, the original NaughtyAttributes, Tri-Inspector — claims `UnityEngine.Object` to do its work. When two are installed, only one wins, and which one is not deterministic; the symptom is that one tool's attributes quietly stop drawing.
 
-If that happens, add `PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player →
-Scripting Define Symbols**. Perfect Foundation then leaves the project-wide inspector to the other
-tool, and its own components keep their attributes regardless.
+If that happens, add `PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR` to **Project Settings → Player → Scripting Define Symbols**. Perfect Foundation then leaves the project-wide inspector to the other tool, and its own components keep their attributes regardless.
 
 ## Third-party notice
 
-This asset uses NaughtyAttributes under the MIT license; see `Third Party Notices.txt` in
-the package for details.
+This asset uses NaughtyAttributes under the MIT license; see `Third Party Notices.txt` in the package for details.
 
 ## License
 
