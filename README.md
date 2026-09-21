@@ -33,7 +33,7 @@ The shared foundation every Perfect Core package is built on.
 This ID allows configuration files to be serialized correctly: the configuration is serialized and deserialized only by its ID, rather than by saving every individual configuration value. This offers two advantages:
 
 1. Serializable data types (such as game saves or game settings) take up less space.
-2. It’s easier to add changes to the game, since the serialized data contains no configuration values (only the ID). This way, you don't have to overwrite anything. You simply update the configuration files, and everything updates automatically for the players.
+2. It’s easier to add changes to the game, since the serialized data contains no configuration values (only the ID). This way, you don't have to overwrite serialized configuration data. You simply update the configuration files, and everything updates automatically for the players.
 
 Use it for any static data, for example for configs:
 
@@ -47,6 +47,10 @@ public class ItemConfig : DataAsset
 }
 ```
 
+#### Serialization
+
+For now, automatic serialization via Newtonsoft.Json is supported out of the box. Support for automatic serialization via ProtoBuf (binary serialization) is planned for the future.
+
 `JsonDataSerializer` does all the serialization for you. Give it a `ConfigService` and every `DataAsset` reference in your save data — any subclass, at any depth — is written as an ID and resolved back on load.
 
 ```csharp
@@ -58,6 +62,8 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 
 >It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
+#### ConfigService
+
 `ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several databases, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
 
 ```csharp
@@ -67,11 +73,16 @@ IList<DataAsset> configs = await Addressables.LoadAssetsAsync<DataAsset>("config
 builder.RegisterInstance(new ConfigService(configs.ToDictionary(config => config.Id)));
 ```
 
-Then you can use it conveniently:
+Then you can use it conveniently via DI:
 
 ```csharp
+[Inject]
+private readonly ConfigService configService;
+
 ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
 ```
+
+#### Database\<T>
 
 `Database<T>` is the simpler alternative — a `ScriptableObject` holding a static, hand-filled list of data assets with the same `GetById` lookup. Use it when there is no container to register a service into, or when one designer-editable list is all a feature needs.
 
