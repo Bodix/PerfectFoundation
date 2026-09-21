@@ -18,13 +18,23 @@ The shared foundation every Perfect Core package is built on.
 
 ## Contents
 
-- [Data assets](#data-assets) — `DataAsset`, JSON serialization, `ConfigService`, `Database<T>`
-- [Event bus](#event-bus) — `IEventBus`, `EventBus`
-- [Type selector](#type-selector) — `[TypeSelector]`, `[TypeSelectorName]`
-- [Timer](#timer) — `Timer`
-- [Comment](#comment) — `Comment`
-- [Structs](#structs) — `TransformData`, `RectTransformData`
-- [Abstractions](#abstractions) — the interfaces the other Perfect Core packages are built on
+- [Perfect Foundation](#perfect-foundation)
+  - [Requirements](#requirements)
+  - [Installation](#installation)
+  - [Contents](#contents)
+    - [Data assets](#data-assets)
+      - [Serialization](#serialization)
+      - [ConfigService](#configservice)
+      - [Database\<T\>](#databaset)
+    - [Event bus](#event-bus)
+    - [Type selector](#type-selector)
+    - [Timer](#timer)
+    - [Comment](#comment)
+    - [Structs](#structs)
+    - [Abstractions](#abstractions)
+  - [NaughtyAttributes](#naughtyattributes)
+  - [Third-party notice](#third-party-notice)
+  - [License](#license)
 
 ### Data assets
 
@@ -122,7 +132,7 @@ eventBus.Clear(); // Drops every subscription — useful when tearing down a sce
 
 ### Type selector
 
-`[TypeSelector]` turns a `[SerializeReference]` field into a searchable dropdown of every concrete `[Serializable]` type derived from the field's type.
+`[TypeSelector]` turns a `[SerializeReference]` field into a searchable dropdown of every concrete type derived from the field's type.
 
 ```csharp
 [SerializeField, SerializeReference, TypeSelector]
