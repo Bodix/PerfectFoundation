@@ -28,15 +28,14 @@ The shared foundation every Perfect Core package is built on.
 
 ### Data assets
 
-`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is
-generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
+`DataAsset` is a `ScriptableObject` that carries a stable, human-readable `Id` in `folder:name` format. The ID is generated instantly after creation from the asset's name and its parent folder, and can be rebuilt with the "Regenerate ID" button in the inspector.
 
 Use it for any static data, for example for configs:
 
 ```csharp
 public class ItemConfig : DataAsset
 {
-    [SerializeField] 
+    [SerializeField]
     private Sprite _icon;
 
     public Sprite Icon => _icon;
@@ -56,8 +55,7 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 
 >It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
-`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one
-database, from several, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
+`ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
 
 ```csharp
 // Load every config by label, then register the service (VContainer shown here).
@@ -185,8 +183,7 @@ The implementations belong in your game, where the input system and the scene st
 
 ## [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes)
 
-The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) and uses it for its own
-inspectors.
+The package bundles a fork of [NaughtyAttributes](https://github.com/dbrizov/NaughtyAttributes) and uses it for its own inspectors.
 
 >Its assemblies and namespace are renamed to `PerfectCore.PerfectFoundation.NaughtyAttributes`, so a project that already contains the original keeps compiling.
 
