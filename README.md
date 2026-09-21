@@ -117,6 +117,7 @@ eventBus.Publish(new ItemCollected(item, amount));
 eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
 eventBus.Clear(); // Drops every subscription — useful when tearing down a scene or a test.
 ```
+>The author of the Perfect Foundation package recommends using standard C# events rather than this event bus. The event bus exists solely to make certain Perfect Core packages (such as the quest package) as versatile and independent as possible.
 
 ### Type selector
 
@@ -140,25 +141,20 @@ Renaming or moving a type that is already serialized breaks the reference, as it
 
 ### Timer
 
-`Timer` is a `MonoBehaviour` countdown that disables itself while idle, so an unused timer costs nothing per frame. It ticks on `Update` or `FixedUpdate` — set `UpdateMethod` — and reports progress through both callbacks and events.
+`Timer` is a `MonoBehaviour` countdown that reports progress through both callbacks and events.
 
 ```csharp
 timer.Start(60f, onComplete: () => Debug.Log("Time is up"));
 
 timer.Pause();
+
 timer.Resume();
-timer.Stop();
 
 timer.SetRemainingTime(timer.RemainingTime + 10f);
+
+timer.Stop();
 ```
 
-| Member | |
-|---|---|
-| `Start(seconds, onStart, onUpdate, onStop, onComplete)` | All callbacks optional |
-| `Pause()` / `Resume()` / `Stop()` | `Stop` raises `onStop`, not `onComplete` |
-| `SetRemainingTime(float)` | Only while started |
-| `RemainingTime`, `IsStarted`, `IsPaused` | |
-| `Started`, `Updated`, `Stopped`, `Completed` | Events, alongside the per-call callbacks |
 
 Callbacks passed to `Start` last for that run only and are cleared when the timer completes or stops; the events persist. `Start` only works in play mode. Perfect UI's `UiTimerText` binds a label straight to one.
 
