@@ -12,7 +12,7 @@ namespace PerfectCore.PerfectFoundation.Editor
 	[CustomEditor(typeof(Comment))]
 	public class CommentEditor : UnityEditor.Editor
 	{
-		private static GUIContent[] typeOptions;
+		private GUIContent[] typeOptions;
 
 		private bool isEditing;
 		private string message;

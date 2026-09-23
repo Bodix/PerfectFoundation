@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 1000" width="1000" height="1000">
+  <defs>
+    <mask id="core" maskUnits="userSpaceOnUse" x="0" y="0" width="1000" height="1000">
+      <rect x="205" y="205" width="590" height="590" rx="118" fill="#fff"/>
+      <rect x="318" y="318" width="364" height="364" rx="62" fill="#000"/>
+      <rect x="372" y="372" width="256" height="256" rx="26" fill="#fff"/>
+    </mask>
+  </defs>
+  <g fill="#fff">
+    <rect x="319" y="70" width="62" height="195" rx="31"/>
+    <rect x="469" y="70" width="62" height="195" rx="31"/>
+    <rect x="619" y="70" width="62" height="195" rx="31"/>
+    <rect x="319" y="735" width="62" height="195" rx="31"/>
+    <rect x="469" y="735" width="62" height="195" rx="31"/>
+    <rect x="619" y="735" width="62" height="195" rx="31"/>
+    <rect x="70" y="319" width="195" height="62" rx="31"/>
+    <rect x="70" y="469" width="195" height="62" rx="31"/>
+    <rect x="70" y="619" width="195" height="62" rx="31"/>
+    <rect x="735" y="319" width="195" height="62" rx="31"/>
+    <rect x="735" y="469" width="195" height="62" rx="31"/>
+    <rect x="735" y="619" width="195" height="62" rx="31"/>
+    <rect x="0" y="0" width="1000" height="1000" mask="url(#core)"/>
+  </g>
+</svg>
