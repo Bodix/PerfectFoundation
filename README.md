@@ -42,8 +42,8 @@ The shared foundation every Perfect Core package is built on.
 
 This ID allows configuration files to be serialized correctly: the configuration is serialized and deserialized only by its ID, rather than by saving every individual configuration value. This offers two advantages:
 
-1. Serializable data types (such as game saves or game settings) take up less space.
-2. It’s easier to add changes to the game, since the serialized data contains no configuration values (only the ID). This way, you don't have to overwrite serialized configuration data. You simply update the configuration files, and everything updates automatically for the players.
+1. Serialized data (such as game saves or game settings) take up less space.
+2. It’s easier to add changes to the game, since the serialized data contains no configuration values (only the ID). This way, you won't have to overwrite the serialized configuration data. All you need to do is update the configuration files, and as long as the configuration ID hasn't changed, everything will be updated automatically for the players.
 
 Use it for any static data, for example for configs:
 
@@ -59,9 +59,9 @@ public class ItemConfig : DataAsset
 
 #### Serialization
 
->For now, automatic serialization via Newtonsoft.Json is supported out of the box. It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed. 
+>For now, automatic serialization via Newtonsoft.Json is supported out of the box. It lives in a separate assembly that is compiled only when `com.unity.nuget.newtonsoft-json` is installed.
 
->Support for automatic binary serialization via ProtoBuf is planned for the future.
+>Support for automatic binary serialization via Protobuf is planned for the future.
 
 `JsonDataSerializer` does all the serialization for you. Give it a `ConfigService` and every `DataAsset` reference in your save data — any subclass, at any depth — is written as an ID and resolved back on load.
 
@@ -77,7 +77,7 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 `ConfigService` is the ID-to-asset lookup all of this goes through. You build the dictionary once at startup — from one database, from several databases, from Addressables, from anywhere else — and hand it over. It is a good fit for a DI container: fill the service before the container is built, register it, and everything that needs a config receives the same instance. With Addressables that is a single startup step, since configs can be loaded by label and keyed by their own ID.
 
 ```csharp
-// Load every config by label.
+// Load every config by Addressables label.
 IList<DataAsset> configs = await Addressables.LoadAssetsAsync<DataAsset>("configs", null).Task;
 
 // Register the service in DI container (VContainer shown here).
@@ -109,12 +109,12 @@ ItemConfig sword = itemDatabase.GetById("weapons:sword");
 `IEventBus` / `EventBus` — an in-memory publish/subscribe bus. Any type can be a message.
 
 ```csharp
-public readonly struct ItemCollected
+public readonly struct ItemCollectedEvent
 {
     public readonly ItemConfig Item;
     public readonly int Amount;
 
-    public ItemCollected(ItemConfig item, int amount)
+    public ItemCollectedEvent(ItemConfig item, int amount)
     {
         Item = item;
         Amount = amount;
@@ -125,20 +125,19 @@ public readonly struct ItemCollected
 The publisher needs nothing but the bus and the message. It never learns who is listening, or whether anyone is.
 
 ```csharp
-public class LootPickup : MonoBehaviour
+public class Loot : MonoBehaviour
 {
-    [Inject]
-    private readonly IEventBus _eventBus;
-
     [SerializeField]
     private ItemConfig _item;
-
     [SerializeField]
     private int _amount = 1;
 
+    [Inject]
+    private readonly IEventBus _eventBus;
+
     private void OnTriggerEnter(Collider other)
     {
-        _eventBus.Publish(new ItemCollected(_item, _amount));
+        _eventBus.Publish(new ItemCollectedEvent(_item, _amount));
 
         Destroy(gameObject);
     }
@@ -150,20 +149,26 @@ The subscriber is any class that can reach the same bus instance. `Subscribe<T>`
 ```csharp
 public class CollectionLog : MonoBehaviour
 {
-    [Inject]
-    private readonly IEventBus _eventBus;
-
     [SerializeField]
     private TMP_Text _label;
 
+    [Inject]
+    private readonly IEventBus _eventBus;
+
     // Subscribe and unsubscribe in matching pairs — OnEnable/OnDisable here,
     // constructor/Dispose in a plain C# class.
-    private void OnEnable() => _eventBus.Subscribe<ItemCollected>(OnItemCollected);
+    private void OnEnable()
+    {
+        _eventBus.Subscribe<ItemCollectedEvent>(OnItemCollected);
+    }
 
-    private void OnDisable() => _eventBus.Unsubscribe<ItemCollected>(OnItemCollected);
+    private void OnDisable()
+    {
+        _eventBus.Unsubscribe<ItemCollectedEvent>(OnItemCollected);
+    }
 
     // The handler. Its signature is what Action<ItemCollected> expects.
-    private void OnItemCollected(ItemCollected message)
+    private void OnItemCollected(ItemCollectedEvent message)
     {
         _label.text = $"Collected {message.Amount} of {message.Item.Id}";
     }
@@ -172,13 +177,11 @@ public class CollectionLog : MonoBehaviour
 
 >Pass a method, not a lambda: `Unsubscribe` needs the same handler back, and a lambda written twice is two different delegates.
 
-`Publish` delivers the message to every handler subscribed to that exact type. Subscribing, unsubscribing and publishing from inside a handler are all safe, and an exception thrown by one handler is logged without stopping the rest.
+`Publish` delivers the message to every handler subscribed to that exact type.
 
 ```csharp
 eventBus.Clear(); // Drops every subscription — useful when tearing down a scene or a test.
 ```
-
->`Clear` is defined on `EventBus` itself rather than on `IEventBus`, so call it on the instance you own — usually the one that created the bus.
 
 >The author of the Perfect Foundation package recommends using standard C# events rather than this event bus. The event bus exists solely to make certain Perfect Core packages (such as the quest package) as versatile and independent as possible.
 
