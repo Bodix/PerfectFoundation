@@ -1,4 +1,4 @@
-// Perfect Core for Unity
+// Perfect Foundation for Unity
 // Copyright © 2020-2026 Bogdan Nikolayev <contact.perfectcore@gmail.com>
 // All Rights Reserved.
 
