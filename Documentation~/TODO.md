@@ -25,3 +25,7 @@ backlog that used to live as TODO comments in public source files.
 
 - Check for an enabled GameObject in `Start`, and review the `Awake` logic afterwards.
 - Consider removing the `_onStart` callback (the `Started` event covers it).
+
+## Package
+
+- The “Media~” folder in the Perfect Foundation package contains the ‘Magnific’ background archive. The GitHub repository is private, but when publishing via UPM, the “Media~” folder may end up in the package itself, and the background's license prohibits this. Before publishing, make sure it is not included in the package.
