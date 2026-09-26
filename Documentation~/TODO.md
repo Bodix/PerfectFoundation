@@ -1,7 +1,7 @@
 # TODO (internal)
 
 >**Not shipped:**
-<br>Unity ignores folders ending with `~`, so this file is not imported into the project and is not part of the Asset Store package. It keeps the design backlog that used to live as TODO comments in public source files.
+<br>`.npmignore` keeps this file out of the package, and Unity does not import folders ending with `~`. It keeps the design backlog that used to live as TODO comments in public source files.
 
 ## TypeSelector
 
@@ -23,4 +23,4 @@
 
 ## Package
 
-- Asset Store Publishing Tools 12 export a folder ending with `~` only when its files have `.meta` files, so `Media~` and `Documentation~` are not uploaded. When the Uploader offers to generate meta files for hidden folders, answer No. After publication, install Perfect Foundation from My Assets and check in `Library/PackageCache` that neither folder is there.
+- `.npmignore` keeps `Media~` and `Documentation~` in the repository but out of the package: Asset Store UPM Publishing Tools build the package with `Client.Pack`, which otherwise includes folders ending with `~`. After publication, install Perfect Foundation from My Assets and check in `Library/PackageCache` that neither folder is there.
