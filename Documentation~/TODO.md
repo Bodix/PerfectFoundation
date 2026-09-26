@@ -23,4 +23,4 @@
 
 ## Package
 
-- The “Media~” folder in the Perfect Foundation package contains the ‘Magnific’ background archive. The GitHub repository is private, but when publishing via UPM, the “Media~” folder may end up in the package itself, and the background's license prohibits this. Before publishing, make sure it is not included in the package.
+- Asset Store Publishing Tools 12 export a folder ending with `~` only when its files have `.meta` files, so `Media~` and `Documentation~` are not uploaded. When the Uploader offers to generate meta files for hidden folders, answer No. After publication, install Perfect Foundation from My Assets and check in `Library/PackageCache` that neither folder is there.
