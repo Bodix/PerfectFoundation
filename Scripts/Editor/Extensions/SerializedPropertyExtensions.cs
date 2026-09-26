@@ -3,7 +3,6 @@
 // All Rights Reserved.
 
 using System;
-using System.Reflection;
 using UnityEditor;
 
 namespace PerfectCore.PerfectFoundation.Editor
@@ -33,10 +32,14 @@ namespace PerfectCore.PerfectFoundation.Editor
 			if (string.IsNullOrEmpty(managedReferenceTypename))
 				return null;
 
+			// Unity's format is "AssemblyName Namespace.Type", with "/" before nested type names.
+			// Type.GetType finds the already loaded assembly without Assembly.Load, 
+			// which the Unity 6.6 analyzers flag in packages installed from the Asset Store.
 			int splitIndex = managedReferenceTypename.IndexOf(' ');
-			Assembly assembly = Assembly.Load(managedReferenceTypename.Substring(0, splitIndex));
+			string assemblyName = managedReferenceTypename.Substring(0, splitIndex);
+			string typeName = managedReferenceTypename.Substring(splitIndex + 1).Replace('/', '+');
 
-			return assembly.GetType(managedReferenceTypename.Substring(splitIndex + 1));
+			return Type.GetType(typeName + ", " + assemblyName);
 		}
 	}
 }
