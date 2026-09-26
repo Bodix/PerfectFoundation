@@ -1,6 +1,6 @@
 {
     "name": "net.perfectcore.perfectfoundation",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "displayName": "Perfect Foundation",
     "description": "Shared lightweight foundation for Perfect Core packages.",
     "unity": "2022.3",

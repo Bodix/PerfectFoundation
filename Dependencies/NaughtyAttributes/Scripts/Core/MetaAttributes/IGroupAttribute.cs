@@ -2,7 +2,7 @@
 
 namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
-	public interface IGroupAttribute
-	{
-	}
+    public interface IGroupAttribute
+    {
+    }
 }

@@ -2,7 +2,7 @@
 
 namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
-	public interface INaughtyAttribute
-	{
-	}
+    public interface INaughtyAttribute
+    {
+    }
 }

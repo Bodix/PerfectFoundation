@@ -4,15 +4,11 @@ The shared foundation every Perfect Core package is built on.
 
 ## Requirements
 
-- Unity 2019.3 or newer.
-
-    >The Asset Store build is submitted from Unity 2022.3 because the store requires it, but the code itself targets 2019.3 and up.
+- Unity 2022.3 or newer.
 
 ## Installation
 
-1. Import the package from the Asset Store.
-
-    >Perfect Foundation has no hard-coded paths: the folder can sit anywhere in your project, and moving it later breaks nothing.
+1. Install the package from the Asset Store: **Window → Package Manager → My Assets → Perfect Foundation → Install**.
 
 2. [Optional] If your own code lives in assembly definitions, add PerfectCore.PerfectFoundation to their references.
 

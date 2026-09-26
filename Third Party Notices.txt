@@ -10,7 +10,7 @@ full.
 COMPONENT: NaughtyAttributes
 -------------------------------------------------------------------------------
 
-Version:  2.0.7
+Version:  2.1.6
 Author:   Denis Rizov
 Source:   https://github.com/dbrizov/NaughtyAttributes
 License:  MIT
@@ -27,7 +27,9 @@ Modifications made for Perfect Foundation:
      the PERFECTFOUNDATION_DISABLE_GLOBAL_INSPECTOR scripting define symbol, so that a project
      already using another inspector extension can leave that slot to it.
 
-  3. The bundled demo scene and test scripts were removed.
+  3. The bundled samples, tests and documentation (README.html and
+     Documentation~) were removed. The documentation is available at
+     https://github.com/dbrizov/NaughtyAttributes.
 
 License text:
 

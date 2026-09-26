@@ -5,6 +5,17 @@ All notable changes to Perfect Foundation are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this package adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-09-26
+
+### Changed
+
+- The minimum Unity version is now 2022.3.
+- The bundled NaughtyAttributes is updated from 2.0.7 to 2.1.6. This fixes compile errors in Unity 6.5 and newer, where `Object.GetInstanceID()` became obsolete.
+
+### Removed
+
+- The documentation files bundled with NaughtyAttributes (`README.html`, `Documentation~`).
+
 ## [1.0.0] - 2026-09-20
 
 First public release.

@@ -3,190 +3,198 @@ using UnityEditor;
 
 namespace PerfectCore.PerfectFoundation.NaughtyAttributes.Editor
 {
-	[CustomPropertyDrawer(typeof(ExpandableAttribute))]
-	public class ExpandablePropertyDrawer : PropertyDrawerBase
-	{
-		protected override float GetPropertyHeight_Internal(SerializedProperty property, GUIContent label)
-		{
-			System.Type propertyType = PropertyUtility.GetPropertyType(property);
-			if (typeof(ScriptableObject).IsAssignableFrom(propertyType))
-			{
-				ScriptableObject scriptableObject = property.objectReferenceValue as ScriptableObject;
-				if (scriptableObject == null)
-				{
-					return GetPropertyHeight(property);
-				}
+    [CustomPropertyDrawer(typeof(ExpandableAttribute))]
+    public class ExpandablePropertyDrawer : PropertyDrawerBase
+    {
+        protected override float GetPropertyHeight_Internal(SerializedProperty property, GUIContent label)
+        {
+            if (property.objectReferenceValue == null)
+            {
+                return GetPropertyHeight(property);
+            }
 
-				if (property.isExpanded)
-				{
-					using (SerializedObject serializedObject = new SerializedObject(scriptableObject))
-					{
-						float totalHeight = EditorGUIUtility.singleLineHeight;
+            System.Type propertyType = PropertyUtility.GetPropertyType(property);
+            if (typeof(ScriptableObject).IsAssignableFrom(propertyType))
+            {
+                ScriptableObject scriptableObject = property.objectReferenceValue as ScriptableObject;
+                if (scriptableObject == null)
+                {
+                    return GetPropertyHeight(property);
+                }
 
-						using (var iterator = serializedObject.GetIterator())
-						{
-							if (iterator.NextVisible(true))
-							{
-								do
-								{
-									SerializedProperty childProperty = serializedObject.FindProperty(iterator.name);
-									if (childProperty.name.Equals("m_Script", System.StringComparison.Ordinal))
-									{
-										continue;
-									}
+                if (property.isExpanded)
+                {
+                    using (SerializedObject serializedObject = new SerializedObject(scriptableObject))
+                    {
+                        float totalHeight = EditorGUIUtility.singleLineHeight;
 
-									bool visible = PropertyUtility.IsVisible(childProperty);
-									if (!visible)
-									{
-										continue;
-									}
+                        using (var iterator = serializedObject.GetIterator())
+                        {
+                            if (iterator.NextVisible(true))
+                            {
+                                do
+                                {
+                                    SerializedProperty childProperty = serializedObject.FindProperty(iterator.name);
+                                    if (childProperty.name.Equals("m_Script", System.StringComparison.Ordinal))
+                                    {
+                                        continue;
+                                    }
 
-									float height = GetPropertyHeight(childProperty);
-									totalHeight += height;
-								}
-								while (iterator.NextVisible(false));
-							}
-						}
+                                    bool visible = PropertyUtility.IsVisible(childProperty);
+                                    if (!visible)
+                                    {
+                                        continue;
+                                    }
 
-						totalHeight += EditorGUIUtility.standardVerticalSpacing;
-						return totalHeight;
-					}
-				}
-				else
-				{
-					return GetPropertyHeight(property);
-				}
-			}
-			else
-			{
-				return GetPropertyHeight(property) + GetHelpBoxHeight();
-			}
-		}
+                                    float height = GetPropertyHeight(childProperty);
+                                    totalHeight += height;
+                                }
+                                while (iterator.NextVisible(false));
+                            }
+                        }
 
-		protected override void OnGUI_Internal(Rect rect, SerializedProperty property, GUIContent label)
-		{
-			EditorGUI.BeginProperty(rect, label, property);
+                        totalHeight += EditorGUIUtility.standardVerticalSpacing;
+                        return totalHeight;
+                    }
+                }
+                else
+                {
+                    return GetPropertyHeight(property);
+                }
+            }
+            else
+            {
+                return GetPropertyHeight(property) + GetHelpBoxHeight();
+            }
+        }
 
-			System.Type propertyType = PropertyUtility.GetPropertyType(property);
-			if (typeof(ScriptableObject).IsAssignableFrom(propertyType))
-			{
-				ScriptableObject scriptableObject = property.objectReferenceValue as ScriptableObject;
-				if (scriptableObject == null)
-				{
-					EditorGUI.PropertyField(rect, property, label, false);
-				}
-				else
-				{
-					// Draw a foldout
-					Rect foldoutRect = new Rect()
-					{
-						x = rect.x,
-						y = rect.y,
-						width = EditorGUIUtility.labelWidth,
-						height = EditorGUIUtility.singleLineHeight
-					};
+        protected override void OnGUI_Internal(Rect rect, SerializedProperty property, GUIContent label)
+        {
+            EditorGUI.BeginProperty(rect, label, property);
 
-					property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, toggleOnLabelClick: true);
+            if (property.objectReferenceValue == null)
+            {
+                EditorGUI.PropertyField(rect, property, label, false);
+            }
+            else
+            {
+                System.Type propertyType = PropertyUtility.GetPropertyType(property);
+                if (typeof(ScriptableObject).IsAssignableFrom(propertyType))
+                {
+                    ScriptableObject scriptableObject = property.objectReferenceValue as ScriptableObject;
+                    if (scriptableObject == null)
+                    {
+                        EditorGUI.PropertyField(rect, property, label, false);
+                    }
+                    else
+                    {
+                        // Draw a foldout
+                        Rect foldoutRect = new Rect()
+                        {
+                            x = rect.x,
+                            y = rect.y,
+                            width = EditorGUIUtility.labelWidth,
+                            height = EditorGUIUtility.singleLineHeight
+                        };
 
-					// Draw the scriptable object field
-					float indentLength = NaughtyEditorGUI.GetIndentLength(rect);
-					float labelWidth = EditorGUIUtility.labelWidth - indentLength + NaughtyEditorGUI.HorizontalSpacing;
-					Rect propertyRect = new Rect()
-					{
-						x = rect.x + labelWidth,
-						y = rect.y,
-						width = rect.width - labelWidth,
-						height = EditorGUIUtility.singleLineHeight
-					};
+                        property.isExpanded = EditorGUI.Foldout(foldoutRect, property.isExpanded, label, toggleOnLabelClick: true);
 
-					EditorGUI.BeginChangeCheck();
-					property.objectReferenceValue = EditorGUI.ObjectField(propertyRect, GUIContent.none, property.objectReferenceValue, propertyType, false);
-					if (EditorGUI.EndChangeCheck())
-					{
-						property.serializedObject.ApplyModifiedProperties();
-					}
+                        // Draw the scriptable object field
+                        Rect propertyRect = new Rect()
+                        {
+                            x = rect.x + EditorGUIUtility.labelWidth + 2.0f,
+                            y = rect.y,
+                            width = rect.width - EditorGUIUtility.labelWidth - 2.0f,
+                            height = EditorGUIUtility.singleLineHeight
+                        };
 
-					// Draw the child properties
-					if (property.isExpanded)
-					{
-						DrawChildProperties(rect, property);
-					}
-				}
-			}
-			else
-			{
-				string message = $"{typeof(ExpandableAttribute).Name} can only be used on scriptable objects";
-				DrawDefaultPropertyAndHelpBox(rect, property, message, MessageType.Warning);
-			}
+                        EditorGUI.PropertyField(propertyRect, property, GUIContent.none, false);
 
-			EditorGUI.EndProperty();
-		}
+                        // Draw the child properties
+                        if (property.isExpanded)
+                        {
+                            DrawChildProperties(rect, property);
+                        }
+                    }
+                }
+                else
+                {
+                    string message = $"{typeof(ExpandableAttribute).Name} can only be used on scriptable objects";
+                    DrawDefaultPropertyAndHelpBox(rect, property, message, MessageType.Warning);
+                }
+            }
 
-		private void DrawChildProperties(Rect rect, SerializedProperty property)
-		{
-			ScriptableObject scriptableObject = property.objectReferenceValue as ScriptableObject;
-			if (scriptableObject == null)
-			{
-				return;
-			}
+            property.serializedObject.ApplyModifiedProperties();
+            EditorGUI.EndProperty();
+        }
 
-			Rect boxRect = new Rect()
-			{
-				x = 0.0f,
-				y = rect.y + EditorGUIUtility.singleLineHeight,
-				width = rect.width * 2.0f,
-				height = rect.height - EditorGUIUtility.singleLineHeight
-			};
+        private void DrawChildProperties(Rect rect, SerializedProperty property)
+        {
+            ScriptableObject scriptableObject = property.objectReferenceValue as ScriptableObject;
+            if (scriptableObject == null)
+            {
+                return;
+            }
 
-			GUI.Box(boxRect, GUIContent.none);
+            ExpandableAttribute expandableAttribute = (ExpandableAttribute)attribute;
 
-			using (new EditorGUI.IndentLevelScope())
-			{
-				EditorGUI.BeginChangeCheck();
+            using (new EditorGUI.DisabledScope(expandableAttribute.IsReadonly))
+            {
+                Rect boxRect = new Rect()
+                {
+                    x = 0.0f,
+                    y = rect.y + EditorGUIUtility.singleLineHeight,
+                    width = rect.width * 2.0f,
+                    height = rect.height - EditorGUIUtility.singleLineHeight
+                };
 
-				SerializedObject serializedObject = new SerializedObject(scriptableObject);
-				using (var iterator = serializedObject.GetIterator())
-				{
-					float yOffset = EditorGUIUtility.singleLineHeight;
+                GUI.Box(boxRect, GUIContent.none);
 
-					if (iterator.NextVisible(true))
-					{
-						do
-						{
-							SerializedProperty childProperty = serializedObject.FindProperty(iterator.name);
-							if (childProperty.name.Equals("m_Script", System.StringComparison.Ordinal))
-							{
-								continue;
-							}
+                using (new EditorGUI.IndentLevelScope())
+                {
+                    SerializedObject serializedObject = new SerializedObject(scriptableObject);
+                    serializedObject.Update();
 
-							bool visible = PropertyUtility.IsVisible(childProperty);
-							if (!visible)
-							{
-								continue;
-							}
+                    using (var iterator = serializedObject.GetIterator())
+                    {
+                        float yOffset = EditorGUIUtility.singleLineHeight;
 
-							float childHeight = GetPropertyHeight(childProperty);
-							Rect childRect = new Rect()
-							{
-								x = rect.x,
-								y = rect.y + yOffset,
-								width = rect.width,
-								height = childHeight
-							};
+                        if (iterator.NextVisible(true))
+                        {
+                            do
+                            {
+                                SerializedProperty childProperty = serializedObject.FindProperty(iterator.name);
+                                if (childProperty.name.Equals("m_Script", System.StringComparison.Ordinal))
+                                {
+                                    continue;
+                                }
 
-							NaughtyEditorGUI.PropertyField(childRect, childProperty, true);
+                                bool visible = PropertyUtility.IsVisible(childProperty);
+                                if (!visible)
+                                {
+                                    continue;
+                                }
 
-							yOffset += childHeight;
-						}
-						while (iterator.NextVisible(false));
-					}
-				}
+                                float childHeight = GetPropertyHeight(childProperty);
+                                Rect childRect = new Rect()
+                                {
+                                    x = rect.x,
+                                    y = rect.y + yOffset,
+                                    width = rect.width,
+                                    height = childHeight
+                                };
 
-				if (EditorGUI.EndChangeCheck())
-				{
-					serializedObject.ApplyModifiedProperties();
-				}
-			}
-		}
-	}
+                                NaughtyEditorGUI.PropertyField(childRect, childProperty, true);
+
+                                yOffset += childHeight;
+                            }
+                            while (iterator.NextVisible(false));
+                        }
+                    }
+
+                    serializedObject.ApplyModifiedProperties();
+                }
+            }
+        }
+    }
 }

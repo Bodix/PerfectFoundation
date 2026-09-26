@@ -2,8 +2,8 @@
 
 namespace PerfectCore.PerfectFoundation.NaughtyAttributes
 {
-	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
-	public class AllowNestingAttribute : DrawerAttribute
-	{
-	}
+    [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+    public class AllowNestingAttribute : DrawerAttribute
+    {
+    }
 }
