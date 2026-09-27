@@ -1,7 +1,7 @@
 # TODO (internal)
 
 >**Not shipped:**
-<br>`.npmignore` keeps this file out of the package, and Unity does not import folders ending with `~`. It keeps the design backlog that used to live as TODO comments in public source files.
+<br>`.npmignore` keeps this file out of the package, and Unity does not import folders ending with `~`.
 
 The publishing steps are in `Asset Store Publishing Plan.md` at the root of the Toolkit repository.
 
