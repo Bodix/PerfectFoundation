@@ -25,6 +25,7 @@ The shared foundation every Perfect Core package is built on.
       - [Validation](#validation)
     - [Event bus](#event-bus)
     - [Type selector](#type-selector)
+    - [Conditions](#conditions)
     - [Timer](#timer)
     - [Comment](#comment)
     - [Structs](#structs)
@@ -214,6 +215,40 @@ public class KillEnemiesObjective : QuestObjective { }
 ```
 
 Renaming or moving a type that is already serialized breaks the reference, as it does with any `[SerializeReference]` field. Use `[MovedFrom]` when you rename one.
+
+### Conditions
+
+`ICondition` is a data-driven check that a designer sets up in the inspector: "only at night", "only from elites", "player level 10 or higher". Keep it in a `[SerializeReference, TypeSelector]` field. Different systems can share one condition type, because they all ask the same question: is the condition met for this context?
+
+```csharp
+// A condition that needs a context of a known type.
+[Serializable, TypeSelectorName("Min level")]
+public class MinLevelCondition : Condition<PlayerContext>
+{
+    public int MinLevel = 10;
+
+    public override bool IsMet(PlayerContext context) => context.Level >= MinLevel;
+}
+
+// A field the designer fills in.
+[SerializeReference, TypeSelector]
+public ICondition Requirement;
+
+// A check in code. The context is any object your conditions need.
+bool unlocked = Requirement == null || Requirement.IsMet(new PlayerContext { Level = 12 });
+```
+
+The context is any object. A `Condition<TContext>` is not met when the context is null or of another type.
+
+Three ready conditions combine the others:
+
+| Condition | Met when | Without inner conditions |
+|---|---|---|
+| All of | every inner condition is met | always met |
+| Any of | at least one inner condition is met | always met |
+| Not | the inner condition is not met | always met |
+
+An empty condition does not restrict. A half-configured condition never hides content silently. Empty slots in the lists are skipped.
 
 ### Timer
 

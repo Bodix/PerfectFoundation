@@ -8,6 +8,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
+- **Conditions** - `ICondition` is a data-driven check against any context object, set up in the inspector with `[SerializeReference, TypeSelector]`. `Condition<TContext>` is a base for conditions that need a context of a known type. **All of**, **Any of** and **Not** combine other conditions. An empty condition does not restrict.
 - **`DataAssetValidator`** (editor) - finds data assets without an ID and data assets that share an ID. Call `FindProblems("Assets/MyGame")` from an edit mode test, or use **Tools → Perfect Foundation → Validate Data Assets**.
 
 ## [1.0.1] - 2026-09-26
