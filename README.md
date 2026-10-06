@@ -22,6 +22,7 @@ The shared foundation every Perfect Core package is built on.
       - [Serialization](#serialization)
       - [ConfigService](#configservice)
       - [Database\<T\>](#databaset)
+      - [Validation](#validation)
     - [Event bus](#event-bus)
     - [Type selector](#type-selector)
     - [Timer](#timer)
@@ -98,6 +99,19 @@ ItemConfig sword = configService.GetConfig<ItemConfig>("weapons:sword");
 public class ItemDatabase : Database<ItemConfig> { }
 
 ItemConfig sword = itemDatabase.GetById("weapons:sword");
+```
+
+#### Validation
+
+Every data asset is saved and loaded by its ID, so IDs must exist and be unique. `DataAssetValidator` finds both problems. Run it from **Tools → Perfect Foundation → Validate Data Assets**, or keep it as an edit mode test, so a copied asset with a duplicate ID never reaches a build:
+
+```csharp
+[Test]
+public void DataAssetIdsAreValid()
+{
+    List<string> problems = DataAssetValidator.FindProblems("Assets/MyGame");
+    Assert.That(problems, Is.Empty, string.Join("\n", problems));
+}
 ```
 
 ### Event bus
