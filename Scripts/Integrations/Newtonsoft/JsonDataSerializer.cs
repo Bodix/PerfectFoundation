@@ -17,6 +17,9 @@ namespace PerfectCore.PerfectFoundation.Newtonsoft
 			_settings = new JsonSerializerSettings
 			{
 				Formatting = Formatting.Indented,
+				// Polymorphic data is written with a type ID, and only classes with an ID are read back.
+				TypeNameHandling = TypeNameHandling.Auto,
+				SerializationBinder = new TypeIdSerializationBinder(),
 				Converters = { new DataAssetConverter<DataAsset>(configService) }
 			};
 		}

@@ -10,6 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - **Conditions** - `ICondition` is a data-driven check against any context object, set up in the inspector with `[SerializeReference, TypeSelector]`. `Condition<TContext>` is a base for conditions that need a context of a known type. **All of**, **Any of** and **Not** combine other conditions. An empty condition does not restrict.
 - **`DataAssetValidator`** (editor) - finds data assets without an ID and data assets that share an ID. Call `FindProblems("Assets/MyGame")` from an edit mode test, or use **Tools → Perfect Foundation → Validate Data Assets**.
+- **Type IDs** - `[TypeId("kill_ships")]` gives a class a short stable name for save files. `JsonDataSerializer` now writes polymorphic data (a field of a base class that holds a subclass) with this ID instead of the class name and reads back only classes with an ID. Renaming or moving such a class no longer breaks saves. `TypeIdSerializationBinder` does the same with your own Newtonsoft settings. `TypeIds.FindProblems()` lists empty and shared IDs: call it from an edit mode test.
 
 ## [1.0.1] - 2026-09-26
 

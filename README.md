@@ -20,6 +20,7 @@ The shared foundation every Perfect Core package is built on.
   - [Contents](#contents)
     - [Data assets](#data-assets)
       - [Serialization](#serialization)
+      - [Type IDs](#type-ids)
       - [ConfigService](#configservice)
       - [Database\<T\>](#databaset)
       - [Validation](#validation)
@@ -69,6 +70,27 @@ var serializer = new JsonDataSerializer(configService);
 serializer.Serialize(saveData, filePath);
 SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 ```
+
+#### Type IDs
+
+A save has to store the type of polymorphic data: a field of a base class that holds a subclass. `JsonDataSerializer` writes this type as a short ID from `[TypeId]` instead of the class name. Renaming a class or moving it to another namespace or assembly does not break old saves.
+
+```csharp
+[Serializable]
+public abstract class Shape { }
+
+[Serializable, TypeId("circle")]
+public class Circle : Shape
+{
+    public float Radius;
+}
+```
+
+- A class saved in a field of another type needs an ID. Saving it without one throws an exception that names the class.
+- Only classes with an ID are read back, so a tampered save cannot create any other class.
+- Keep IDs unique and never change them once saves exist. A subclass does not inherit the ID of its parent. Packages prefix their IDs, e.g. `perfect_quests.collect_items`.
+- `TypeIds.FindProblems()` lists empty IDs and IDs shared by several classes. Call it from an edit mode test.
+- With your own Newtonsoft settings, use `TypeIdSerializationBinder` and `TypeNameHandling.Auto`.
 
 #### ConfigService
 
