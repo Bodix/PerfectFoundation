@@ -9,6 +9,7 @@ namespace PerfectCore.PerfectFoundation
 	/// Store it in a <c>[SerializeReference, TypeSelector]</c> field.
 	/// Combine conditions with <see cref="AllOfCondition"/>, <see cref="AnyOfCondition"/> and <see cref="NotCondition"/>.
 	/// </summary>
+	[RequireTypeId]
 	public interface ICondition
 	{
 		/// <summary>

@@ -73,10 +73,10 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 
 #### Type IDs
 
-A save has to store the type of polymorphic data: a field of a base class that holds a subclass. `JsonDataSerializer` writes this type as a short ID from `[TypeId]` instead of the class name. Renaming a class or moving it to another namespace or assembly does not break old saves.
+When a field of a base class holds a subclass, the save has to store which class it is. `JsonDataSerializer` stores a short ID from `[TypeId]` instead of the class name, so renaming or moving the class does not break saves.
 
 ```csharp
-[Serializable]
+[RequireTypeId]
 public abstract class Shape { }
 
 [Serializable, TypeId("circle")]
@@ -86,11 +86,11 @@ public class Circle : Shape
 }
 ```
 
-- A class saved in a field of another type needs an ID. Saving it without one throws an exception that names the class.
-- Only classes with an ID are read back, so a tampered save cannot create any other class.
-- Keep IDs unique and never change them once saves exist. A subclass does not inherit the ID of its parent. Packages prefix their IDs, e.g. `perfect_quests.collect_items`.
-- `TypeIds.FindProblems()` lists empty IDs and IDs shared by several classes. Call it from an edit mode test.
-- With your own Newtonsoft settings, use `TypeIdSerializationBinder` and `TypeNameHandling.Auto`.
+- Every class saved this way needs a `[TypeId]`. IDs are unique and never change once saves exist. Packages prefix their IDs: `perfect_foundation.all_of`.
+- Only classes with an ID are read from a save.
+- `[RequireTypeId]` marks a base class or interface whose subclasses need an ID. `ICondition` has it, so every condition needs an ID.
+- `TypeIds.FindProblems()` finds subclasses without an ID, empty IDs and shared IDs. Call it from an edit mode test.
+- With your own Newtonsoft settings, use `TypeNameHandling.Auto` and `TypeIdSerializationBinder`.
 
 #### ConfigService
 
@@ -244,7 +244,7 @@ Renaming or moving a type that is already serialized breaks the reference, as it
 
 ```csharp
 // A condition that needs a context of a known type.
-[Serializable, TypeSelectorName("Min level")]
+[Serializable, TypeSelectorName("Min level"), TypeId("min_level")]
 public class MinLevelCondition : Condition<PlayerContext>
 {
     public int MinLevel = 10;

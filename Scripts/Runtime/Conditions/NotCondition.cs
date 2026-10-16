@@ -13,6 +13,7 @@ namespace PerfectCore.PerfectFoundation
 	/// </summary>
 	[Serializable]
 	[TypeSelectorName("Not")]
+	[TypeId("perfect_foundation.not")]
 	public class NotCondition : ICondition
 	{
 		[SerializeReference, TypeSelector]

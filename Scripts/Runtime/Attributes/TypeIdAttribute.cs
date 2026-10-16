@@ -7,16 +7,9 @@ using System;
 namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
-	/// A short stable name of a class for save files, e.g. <c>[TypeId("kill_ships")]</c>.
-	/// <para>
-	/// A save has to store the type of polymorphic data: a field of a base class that holds a subclass.
-	/// With an ID instead of the class name, the class can be renamed or moved to another namespace or assembly
-	/// without breaking old saves. Only classes with an ID are read back, so a tampered save cannot create
-	/// any other class.
-	/// </para>
-	/// <para>
-	/// Keep IDs unique and never change them once saves exist. A subclass does not inherit the ID.
-	/// </para>
+	/// A short ID of a class for save files, e.g. <c>[TypeId("kill_ships")]</c>.
+	/// A save stores it instead of the class name, so the class can be renamed or moved.
+	/// The ID must be unique and must never change once saves exist. Subclasses do not inherit it.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
 	public sealed class TypeIdAttribute : Attribute

@@ -14,6 +14,7 @@ namespace PerfectCore.PerfectFoundation
 	/// </summary>
 	[Serializable]
 	[TypeSelectorName("All of")]
+	[TypeId("perfect_foundation.all_of")]
 	public class AllOfCondition : ICondition
 	{
 		[SerializeReference, TypeSelector]
