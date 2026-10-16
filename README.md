@@ -76,20 +76,21 @@ SaveData loaded = serializer.Deserialize<SaveData>(filePath);
 When a field of a base class holds a subclass, the save has to store which class it is. `JsonDataSerializer` stores a short ID from `[TypeId]` instead of the class name, so renaming or moving the class does not break saves.
 
 ```csharp
-[RequireTypeId]
+[RequireTypeId("shape")]
 public abstract class Shape { }
 
-[Serializable, TypeId("circle")]
+[Serializable, TypeId("shape.circle")]
 public class Circle : Shape
 {
     public float Radius;
 }
 ```
 
-- Every class saved this way needs a `[TypeId]`. IDs are unique and never change once saves exist. Packages prefix their IDs: `perfect_foundation.all_of`.
+- An ID is `kind.name` in lowercase snake_case. The kind comes from `[RequireTypeId]` on the base class or interface, the name is the class name without the kind: `AllOfCondition` → `condition.all_of`.
+- External content, e.g. a mod, adds its namespace: `my_mod:condition.full_moon`.
+- An ID is unique and never changes once saves exist, even if the class or the package is renamed.
 - Only classes with an ID are read from a save.
-- `[RequireTypeId]` marks a base class or interface whose subclasses need an ID. `ICondition` has it, so every condition needs an ID.
-- `TypeIds.FindProblems()` finds subclasses without an ID, empty IDs and shared IDs. Call it from an edit mode test.
+- `TypeIds.FindProblems()` finds subclasses without an ID, IDs that break the format and shared IDs. Call it from an edit mode test.
 - With your own Newtonsoft settings, use `TypeNameHandling.Auto` and `TypeIdSerializationBinder`.
 
 #### ConfigService
@@ -244,7 +245,7 @@ Renaming or moving a type that is already serialized breaks the reference, as it
 
 ```csharp
 // A condition that needs a context of a known type.
-[Serializable, TypeSelectorName("Min level"), TypeId("min_level")]
+[Serializable, TypeSelectorName("Min level"), TypeId("condition.min_level")]
 public class MinLevelCondition : Condition<PlayerContext>
 {
     public int MinLevel = 10;

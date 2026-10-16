@@ -7,9 +7,10 @@ using System;
 namespace PerfectCore.PerfectFoundation
 {
 	/// <summary>
-	/// A short ID of a class for save files, e.g. <c>[TypeId("kill_ships")]</c>.
-	/// A save stores it instead of the class name, so the class can be renamed or moved.
-	/// The ID must be unique and must never change once saves exist. Subclasses do not inherit it.
+	/// A short ID of a class for save files: the kind, a dot and the name in lowercase snake_case,
+	/// e.g. <c>[TypeId("objective.kill_ships")]</c>. A save stores it instead of the class name,
+	/// so the class can be renamed or moved. The ID must be unique and must never change once saves exist.
+	/// Subclasses do not inherit it.
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct, Inherited = false)]
 	public sealed class TypeIdAttribute : Attribute

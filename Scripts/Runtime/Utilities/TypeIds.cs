@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace PerfectCore.PerfectFoundation
@@ -15,6 +16,9 @@ namespace PerfectCore.PerfectFoundation
 	/// </summary>
 	public static class TypeIds
 	{
+		// kind.name in lowercase snake_case, with an optional namespace of external content: "my_mod:kind.name".
+		private static readonly Regex Format = new Regex(@"^([a-z0-9_]+:)?[a-z0-9_]+(\.[a-z0-9_]+)+$");
+
 		private static readonly Lazy<Dictionary<string, Type>> TypesById =
 			new Lazy<Dictionary<string, Type>>(BuildTypesById);
 
@@ -38,30 +42,39 @@ namespace PerfectCore.PerfectFoundation
 
 		/// <summary>
 		/// Lists classes without the ID that <see cref="RequireTypeIdAttribute" /> asks for,
-		/// empty IDs and IDs shared by several classes. Call it from an edit mode test.
+		/// IDs that break the format or the kind, and IDs shared by several classes. Call it from an edit mode test.
 		/// </summary>
 		public static List<string> FindProblems()
 		{
 			List<Type> types = FindTypes().ToList();
-			List<string> problems = new List<string>();
-
-			foreach (Type type in types)
+			List<string> problems = types.Select(FindProblem).Where(problem => problem != null).ToList();
+			foreach (IGrouping<string, Type> group in GroupById(types).Where(group => group.Count() > 1))
 			{
-				Type requiringType = FindRequiringType(type);
-				if (requiringType != null && !type.IsDefined(typeof(TypeIdAttribute), false))
-					problems.Add($"{type.FullName} needs a type ID: it derives from {requiringType.FullName}.");
-			}
-
-			foreach (IGrouping<string, Type> group in GroupById(types))
-			{
-				if (group.Key.Length == 0)
-					problems.AddRange(group.Select(type => $"{type.FullName} has an empty type ID."));
-				else if (group.Count() > 1)
-					problems.Add($"Type ID '{group.Key}' is shared by " +
-						$"{string.Join(", ", group.Select(type => type.FullName))}.");
+				problems.Add($"Type ID '{group.Key}' is shared by " +
+					$"{string.Join(", ", group.Select(type => type.FullName))}.");
 			}
 
 			return problems;
+		}
+
+		private static string FindProblem(Type type)
+		{
+			Type requiringType = FindRequiringType(type);
+			if (!type.IsDefined(typeof(TypeIdAttribute), false))
+				return requiringType != null ? $"{type.FullName} needs a type ID: it derives from {requiringType.FullName}." : null;
+
+			string id = type.GetCustomAttribute<TypeIdAttribute>(false).Id ?? string.Empty;
+			if (!Format.IsMatch(id))
+				return $"{type.FullName} has type ID '{id}', which is not kind.name in lowercase snake_case.";
+
+			if (requiringType == null)
+				return null;
+
+			string kind = requiringType.GetCustomAttribute<RequireTypeIdAttribute>(false).Kind;
+			string localId = id.Substring(id.IndexOf(':') + 1);
+			return localId.StartsWith(kind + ".", StringComparison.Ordinal)
+				? null
+				: $"{type.FullName} has type ID '{id}', which must start with '{kind}.': it derives from {requiringType.FullName}.";
 		}
 
 		private static Dictionary<string, Type> BuildTypesById()
@@ -69,9 +82,6 @@ namespace PerfectCore.PerfectFoundation
 			Dictionary<string, Type> typesById = new Dictionary<string, Type>();
 			foreach (IGrouping<string, Type> group in GroupById(FindTypes()))
 			{
-				if (group.Key.Length == 0)
-					continue;
-
 				if (group.Count() > 1)
 				{
 					// Data of a shared ID could be read into the wrong class, so it is not read at all.
@@ -90,8 +100,9 @@ namespace PerfectCore.PerfectFoundation
 		private static IEnumerable<IGrouping<string, Type>> GroupById(IEnumerable<Type> types)
 		{
 			return types
-				.Where(type => type.IsDefined(typeof(TypeIdAttribute), false))
-				.GroupBy(type => type.GetCustomAttribute<TypeIdAttribute>(false).Id ?? string.Empty);
+				.Select(type => TryGetId(type, out string id) ? (id, type) : (null, null))
+				.Where(pair => pair.id != null)
+				.GroupBy(pair => pair.id, pair => pair.type);
 		}
 
 		/// <summary>
