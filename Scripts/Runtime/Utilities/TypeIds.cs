@@ -16,8 +16,8 @@ namespace PerfectCore.PerfectFoundation
 	/// </summary>
 	public static class TypeIds
 	{
-		// kind.name in lowercase snake_case, with an optional namespace of external content: "my_mod:kind.name".
-		private static readonly Regex Format = new Regex(@"^([a-z0-9_]+:)?[a-z0-9_]+(\.[a-z0-9_]+)+$");
+		// kind.name in lowercase snake_case.
+		private static readonly Regex Format = new Regex(@"^[a-z0-9_]+(\.[a-z0-9_]+)+$");
 
 		private static readonly Lazy<Dictionary<string, Type>> TypesById =
 			new Lazy<Dictionary<string, Type>>(BuildTypesById);
@@ -71,8 +71,7 @@ namespace PerfectCore.PerfectFoundation
 				return null;
 
 			string kind = requiringType.GetCustomAttribute<RequireTypeIdAttribute>(false).Kind;
-			string localId = id.Substring(id.IndexOf(':') + 1);
-			return localId.StartsWith(kind + ".", StringComparison.Ordinal)
+			return id.StartsWith(kind + ".", StringComparison.Ordinal)
 				? null
 				: $"{type.FullName} has type ID '{id}', which must start with '{kind}.': it derives from {requiringType.FullName}.";
 		}

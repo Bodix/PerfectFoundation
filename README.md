@@ -87,7 +87,6 @@ public class Circle : Shape
 ```
 
 - An ID is `kind.name` in lowercase snake_case. The kind comes from `[RequireTypeId]` on the base class or interface, the name is the class name without the kind: `AllOfCondition` → `condition.all_of`.
-- External content, e.g. a mod, adds its namespace: `my_mod:condition.full_moon`.
 - An ID is unique and never changes once saves exist, even if the class or the package is renamed.
 - Only classes with an ID are read from a save.
 - `TypeIds.FindProblems()` finds subclasses without an ID, IDs that break the format and shared IDs. Call it from an edit mode test.
